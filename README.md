@@ -1,4 +1,4 @@
-# Artisanal-Machine-Learning
+# Artisanal Machine Learning
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Artisan_(14391762347).jpg/1024px-Artisan_(14391762347).jpg" width="400">
 
