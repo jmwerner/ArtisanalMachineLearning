@@ -1,0 +1,6 @@
+language: R
+cache: packages
+sudo: false
+
+before_deploy:
+  - R -e "install.packages('roxygen2', repos = 'http://cran.rstudio.com')"

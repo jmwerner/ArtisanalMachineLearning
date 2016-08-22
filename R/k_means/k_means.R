@@ -1,5 +1,6 @@
 # This script contains all functions for the k means algorithm
 
+#' @export
 aml_k_means = function(data, k){
     # Description:
     #     Calculates k means predictions for given data. It is assumed that all
@@ -14,7 +15,7 @@ aml_k_means = function(data, k){
     .test_input(data, k)
 
 
-
+    5
 }
 
 .test_input = function(data, k){
