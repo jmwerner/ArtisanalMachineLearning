@@ -1,0 +1,9 @@
+Package: ArtisanalMachineLearning
+Title: Hand made, 100% organic machine learning.
+Version: 0.0.0.9000
+Authors@R: person(“Jeremy”, “Werner”, email = “jeremy@jerwerner.com", role = c("aut", "cre"))
+Description: As an exercise of professional development (but mostly for funzies) I will be writing many of the machine learning algorithms I know and love completely by hand from scratch. Doing such will help me achieve a 100% bullet-proof understanding of the algorithms and their deepest inner-workings.
+Depends: R (>= 3.3.1)
+License: MIT
+Encoding: UTF-8
+LazyData: true
