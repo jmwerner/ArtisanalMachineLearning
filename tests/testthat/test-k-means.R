@@ -1,8 +1,3 @@
-
-library(testthat)
-
-# source("../k_means.R")
-
 # Use iris for unit testing
 data(iris)
 
