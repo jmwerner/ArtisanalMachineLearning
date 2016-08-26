@@ -1,10 +1,17 @@
 # This script contains all functions for the k means algorithm
 
+#' AML k-Means
+#'
+#' Calculates k means predictions for given data. It is assumed that all
+#' given columns will be used in calculation. 
+#'
+#' @param data Input data.frame of columns of data
+#' @param k Number of clusters to fit
+#' @return Vector of assigned cluster values
 #' @export
 aml_k_means = function(data, k){
     # Description:
-    #     Calculates k means predictions for given data. It is assumed that all
-    #         given columns will be used in calculation. 
+    #     
     # Args:
     #     n: Number of 
     #     k: Maximum label number (labels are integers 1,...,k)
