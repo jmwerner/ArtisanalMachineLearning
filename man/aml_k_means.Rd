@@ -8,9 +8,11 @@ aml_k_means(data, k)
 }
 \arguments{
 \item{data}{Input data.frame of columns of data}
+
+\item{k}{Number of clusters to fit}
 }
 \value{
-k Number of clusters to fit
+Vector of assigned cluster values
 }
 \description{
 Calculates k means predictions for given data. It is assumed that all
