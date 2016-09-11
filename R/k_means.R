@@ -42,8 +42,10 @@ aml_k_means = function(data, k){
 #' 
 #' @param n Number of labels to assign (equal to nrow(data))
 #' @param k Maximum label (integers 1,...,k)
+#' @param seed Random seed to be set for number generator
 #' @return Vector Int[N] of labels 
-.find_initial_assignments = function(n, k){
+.find_initial_assignments = function(n, k, seed = 1337){
+    set.seed(seed)
     sample(1:k, n, replace = TRUE)
 }
 
@@ -62,7 +64,24 @@ aml_k_means = function(data, k){
     data.frame(centroids)
 }
 
-
-.calculate_within_cluster_variance = function(data, variance_function){
-    5
+#' Calculate distances from centroids
+#' 
+#' This function calculates the pointwise distances from the given data points
+#' to the given centroids
+#' 
+#' @param data numeric data.frame of size n x p
+#' @param centroids numeric data.frame of k x p
+#' @return list of length k with distances to centroids in order
+.calculate_distances_from_centroids = function(data, centroids){
+    distances = list()
+    n = nrow(data)
+    for(roid in 1:nrow(centroids)){
+        distances_for_roid = numeric(n)
+        for(i in 1:n){
+            distances_for_roid[i] = dist(rbind(centroids[roid,], data[i,]))
+        }
+        distances[[roid]] = distances_for_roid
+    }
+    distances
 }
+
