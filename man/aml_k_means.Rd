@@ -7,7 +7,7 @@
 aml_k_means(data, k)
 }
 \arguments{
-\item{data}{Input data.frame of columns of data}
+\item{data}{Input n x p sized data.frame of data}
 
 \item{k}{Number of clusters to fit}
 }
