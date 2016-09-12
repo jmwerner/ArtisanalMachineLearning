@@ -80,3 +80,16 @@ test_that("Distances from centroids are correctly calculated", {
     }
 })
 
+test_that("New label calculations based on distance are correct", {
+    l1 = list(c(1, 2, 3), c(3, 1, 1))
+    expect_true(all(.calculate_new_labels(l1) == c(1, 2, 2)))
+    l2 = list(c(1, 1, 1), c(1, 1, 1))
+    expect_true(all(.calculate_new_labels(l2) == c(1, 1, 1)))
+    data = iris[1:12, 1:4]
+    roids = .calculate_centroids(data, rep(1:3, 4))
+    d2 = .calculate_distances_from_centroids(data, roids)
+    expect_true(
+        all(.calculate_new_labels(d2) == as.integer(c(2, 1, 1, 1, 2, 2, 3, 2, 1, 1, 2, 3)))
+    )
+})
+

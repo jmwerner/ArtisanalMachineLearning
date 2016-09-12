@@ -3,7 +3,7 @@
 #' AML k-Means
 #'
 #' Calculates k means predictions for given data. It is assumed that all
-#' given columns will be used in calculation. 
+#' given columns will be used in calculation
 #'
 #' @param data Input n x p sized data.frame of data
 #' @param k Number of clusters to fit
@@ -84,4 +84,17 @@ aml_k_means = function(data, k){
     }
     distances
 }
+
+#' Calculate new labels
+#' 
+#' This function calculates new integer labels based on the smallest distance
+#' where repeated min values go to the first occurrence of the min
+#' 
+#' @param distances list of length k with distances to centroids in order
+#' @return vector of length n with new integer labels
+.calculate_new_labels = function(distances){
+    matrix_of_distances = do.call(cbind, distances)
+    apply(matrix_of_distances, 1, which.min)
+}
+
 
