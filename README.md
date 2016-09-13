@@ -1,6 +1,7 @@
 # Artisanal Machine Learning
 
-[![Travis-CI Build Status](https://travis-ci.org/jmwerner/ArtisanalMachineLearning.svg?branch=master)](https://travis-ci.org/jmwerner/ArtisanalMachineLearning)
+[![Travis-CI Build Status](https://travis-ci.org/jmwerner/ArtisanalMachineLearning.svg?branch=master)](https://travis-ci.org/jmwerner/ArtisanalMachineLearning) [![codecov](https://codecov.io/gh/jmwerner/ArtisanalMachineLearning/branch/master/graph/badge.svg)](https://codecov.io/gh/jmwerner/ArtisanalMachineLearning)
+
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Artisan_(14391762347).jpg/1024px-Artisan_(14391762347).jpg" width="400">
 
