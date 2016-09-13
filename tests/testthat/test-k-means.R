@@ -93,3 +93,18 @@ test_that("New label calculations based on distance are correct", {
     )
 })
 
+
+context("K-means output testing")
+
+test_that("K-means algorithm outputs appropriately", {
+    vect = aml_k_means(iris[, 1:4], 3)
+    expect_true(all(vect %in% 1:3))
+    expect_true(length(vect) == nrow(iris))
+})
+
+
+
+
+
+
+

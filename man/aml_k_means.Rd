@@ -16,6 +16,6 @@ Vector of assigned cluster values
 }
 \description{
 Calculates k means predictions for given data. It is assumed that all
-given columns will be used in calculation.
+given columns will be used in calculation
 }
 

@@ -12,8 +12,19 @@
 aml_k_means = function(data, k){
     .test_input(data, k)
 
+    new_labels = .find_initial_assignments(nrow(data), k)
+    labels = rep(0, nrow(data))
+    iter = 0
 
-    5
+    while(!all(labels == new_labels) & iter < 1000){
+        labels = new_labels
+        roids = .calculate_centroids(data, new_labels)
+        distances = .calculate_distances_from_centroids(data, roids)
+        new_labels = .calculate_new_labels(distances)
+        iter = iter + 1
+    }
+
+    new_labels
 }
 
 #' Test input 
@@ -25,15 +36,18 @@ aml_k_means = function(data, k){
 #' @param k Maximum label number (labels are integers 1,...,k)
 #' @return NULL, function stops execution if error occurs
 .test_input = function(data, k){
-
-    tryCatch(k > 0, 
-             finally = stop("Number of groups k must be positive!"))
-    tryCatch(class(data) == "data.frame", 
-             finally = stop("Data must be a data.frame"))
-    tryCatch(nrow(data) > 0, 
-             finally = stop("Data must have a positive number of rows!"))
-    tryCatch(all(sapply(data, is.numeric)), 
-             finally = stop("All columns of data must be numeric!"))
+    if(k <= 0){
+        stop("Number of groups k must be positive!")
+    }
+    if(class(data) != "data.frame"){
+        stop("Data must be a data.frame")
+    }
+    if(nrow(data) <= 0){
+        stop("Data must have a positive number of rows!")
+    }
+    if(!all(sapply(data, is.numeric))){
+        stop("All columns of data must be numeric!")
+    }
 }
 
 #' Find initial assignments
@@ -96,5 +110,8 @@ aml_k_means = function(data, k){
     matrix_of_distances = do.call(cbind, distances)
     apply(matrix_of_distances, 1, which.min)
 }
+
+
+
 
 
