@@ -103,8 +103,3 @@ test_that("K-means algorithm outputs appropriately", {
 })
 
 
-
-
-
-
-
