@@ -5,13 +5,30 @@
 #' Calculates k means predictions for given data. It is assumed that all
 #' given columns will be used in calculation.
 #'
-#' @param data Input n x p sized data.frame of data
+#' @param data Input n x p sized data.frame of numeric data
 #' @param k Number of clusters to fit
-#' @return Vector of assigned cluster values
+#' @param maximum_iterations Maximum number of iterations to allow while trying
+#' to converge
+#' @return Object of all results of class aml_k_means
 #' @export
 aml_k_means = function(data, k, maximum_iterations = 1e6){
     .test_input(data, k)
 
+    results = .run_algorithm_until_convergence(data, k, maximum_iterations)
+
+    .create_output_object(results$new_labels, results$data, results$iter, results$roids, results$k)
+}
+
+#' Run algorithm until convergence
+#'
+#' Runs k-means loop until convergence or maximum iterations are met
+#'
+#' @param data Input n x p sized data.frame of numeric data
+#' @param k Number of clusters to fit
+#' @param maximum_iterations Maximum number of iterations to allow while trying
+#' to converge
+#' @return 
+.run_algorithm_until_convergence = function(data, k, maximum_iterations){
     new_labels = .find_initial_assignments(nrow(data), k)
     labels = rep(0, nrow(data))
     iter = 0
@@ -29,17 +46,22 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
                       maximum_iterations))
     }
 
-    .create_output_object(new_labels, data, iter, roids, k)
+    list(new_labels = new_labels, 
+         data = data, 
+         iter = iter, 
+         roids = roids, 
+         k = k)
 }
+
 
 #' Test input 
 #'
 #' This function will error-out early if any inputs to the aml_k_means function
 #' are unsatisfactory.
 #'
-#' @param data data.frame input of size n x p
+#' @param data Input data.frame of size n x p
 #' @param k Maximum label number (labels are integers 1,...,k)
-#' @return NULL, function stops execution if error occurs
+#' @return NULL Function stops execution if error occurs
 .test_input = function(data, k){
     if(k <= 0){
         stop("Number of groups k must be positive!")
