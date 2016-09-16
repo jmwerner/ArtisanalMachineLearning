@@ -7,12 +7,15 @@
 aml_k_means(data, k, maximum_iterations = 1e+06)
 }
 \arguments{
-\item{data}{Input n x p sized data.frame of data}
+\item{data}{Input n x p sized data.frame of numeric data}
 
 \item{k}{Number of clusters to fit}
+
+\item{maximum_iterations}{Maximum number of iterations to allow while trying
+to converge}
 }
 \value{
-Vector of assigned cluster values
+Results object of class aml_k_means
 }
 \description{
 Calculates k means predictions for given data. It is assumed that all

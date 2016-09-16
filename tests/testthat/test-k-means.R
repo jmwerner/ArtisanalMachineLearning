@@ -112,6 +112,8 @@ test_that("K-means algorithm outputs appropriately", {
     expect_true(all(!is.na(k_means_execution$centroids)))
     expect_true(k_means_execution$k > 0)
     expect_true(!is.na(k_means_execution$k))
+
+    expect_warning(aml_k_means(iris[,1:3], 10, maximum_iterations = 1))
 })
 
 
