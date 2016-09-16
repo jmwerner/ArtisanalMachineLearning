@@ -7,7 +7,8 @@ Description: As an exercise of professional development (but mostly for funzies)
     completely by hand from scratch. Doing such will help me achieve a 100 percent
     bullet-proof understanding of the algorithms and their deepest inner-workings.
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.3.1),
+    ggplot2 (>= 2.1.0)
 Suggests:
     testthat (>= 1.0.2)
 License: MIT

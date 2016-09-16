@@ -97,9 +97,9 @@ test_that("New label calculations based on distance are correct", {
 })
 
 
-context("K-means output testing")
+context("k-means output testing")
 
-test_that("K-means algorithm outputs appropriately", {
+test_that("k-means algorithm outputs appropriately", {
     k_means_execution = aml_k_means(iris[, 1:4], 3)
 
     vect = k_means_execution$labels
@@ -114,6 +114,8 @@ test_that("K-means algorithm outputs appropriately", {
     expect_true(!is.na(k_means_execution$k))
 
     expect_warning(aml_k_means(iris[,1:3], 10, maximum_iterations = 1))
+
+    expect_true(is.data.frame(k_means_execution$data))
 })
 
 

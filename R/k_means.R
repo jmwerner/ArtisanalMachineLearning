@@ -102,3 +102,30 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
     class(output) = c("aml_k_means", class(output))
     output
 }
+
+
+#' AML k-means default plot function
+#'
+#' Plots a basic k-means scatterplot graph based on given results. Will plot a 
+#' scatterplot of the first two principal components if data has more than 2 
+#' columns.
+#'
+#' @param results_object 
+#' @return NULL
+#' @export
+plot.aml_k_means = function(results_object, plot_it = TRUE){
+    if(ncol(results_object$data) == 2){
+        print(names(results_object$data))
+        column_names = names(results_object$data)
+        ggplot_object = ggplot(results_object$data, 
+                               aes(x = .convert_to_ns(column_names[1]), 
+                                   y = .convert_to_ns(column_names[2]))) + 
+                            geom_point()
+    }
+    ggplot_object
+}
+
+.convert_to_ns = function(string){
+    eval(parse(text = string))
+}
+
