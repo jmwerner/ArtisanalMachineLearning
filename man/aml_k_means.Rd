@@ -4,7 +4,7 @@
 \alias{aml_k_means}
 \title{AML k-Means}
 \usage{
-aml_k_means(data, k)
+aml_k_means(data, k, maximum_iterations = 1e+06)
 }
 \arguments{
 \item{data}{Input n x p sized data.frame of data}
@@ -16,6 +16,6 @@ Vector of assigned cluster values
 }
 \description{
 Calculates k means predictions for given data. It is assumed that all
-given columns will be used in calculation
+given columns will be used in calculation.
 }
 
