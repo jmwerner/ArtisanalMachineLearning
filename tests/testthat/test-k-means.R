@@ -5,7 +5,9 @@ context("Input testing")
 
 test_that("Erroneous input returns error", {
     expect_error(aml_k_means(iris, -1))
+    expect_error(aml_k_means(iris, 4.1))
     expect_error(aml_k_means(5, 1))
+    expect_error(aml_k_means(data.frame(), 1))
     expect_error(aml_k_means(matrix(1:5), 1))
     expect_error(aml_k_means(data.frame(letters), 1))
     expect_error(aml_k_means(data.frame(letters[1:5], 1:5), 1))
@@ -89,7 +91,8 @@ test_that("New label calculations based on distance are correct", {
     roids = .calculate_centroids(data, rep(1:3, 4))
     d2 = .calculate_distances_from_centroids(data, roids)
     expect_true(
-        all(.calculate_new_labels(d2) == as.integer(c(2, 1, 1, 1, 2, 2, 3, 2, 1, 1, 2, 3)))
+        all(.calculate_new_labels(d2) == as.integer(c(2, 1, 1, 1, 2, 2, 3, 2, 1,
+                                                      1, 2, 3)))
     )
 })
 
@@ -100,6 +103,7 @@ test_that("K-means algorithm outputs appropriately", {
     vect = aml_k_means(iris[, 1:4], 3)
     expect_true(all(vect %in% 1:3))
     expect_true(length(vect) == nrow(iris))
+    expect_true(all(!is.null(vect)))
 })
 
 
