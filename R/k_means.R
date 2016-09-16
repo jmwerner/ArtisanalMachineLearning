@@ -9,14 +9,14 @@
 #' @param k Number of clusters to fit
 #' @param maximum_iterations Maximum number of iterations to allow while trying
 #' to converge
-#' @return Object of all results of class aml_k_means
+#' @return Results object of class aml_k_means
 #' @export
 aml_k_means = function(data, k, maximum_iterations = 1e6){
     .test_input(data, k)
 
     results = .run_algorithm_until_convergence(data, k, maximum_iterations)
 
-    .create_output_object(results$new_labels, results$data, results$iter, results$roids, results$k)
+    .create_output_object(results)
 }
 
 
@@ -93,12 +93,12 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
     apply(matrix_of_distances, 1, which.min)
 }
 
-.create_output_object = function(labels, data, iter, roids, k){
-    output = list(labels = labels, 
-                  iterations = iter,
-                  centroids = roids, 
-                  k = k,
-                  data = data)
+.create_output_object = function(results){
+    output = list(labels = results$new_labels, 
+                  iterations = results$iter,
+                  centroids = results$roids, 
+                  k = results$k,
+                  data = results$data)
     class(output) = c("aml_k_means", class(output))
     output
 }
