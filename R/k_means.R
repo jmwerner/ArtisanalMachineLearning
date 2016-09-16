@@ -39,8 +39,11 @@ aml_k_means = function(data, k){
     if(k <= 0){
         stop("Number of groups k must be positive!")
     }
-    if(class(data) != "data.frame"){
-        stop("Data must be a data.frame")
+    if(as.integer(k) != k){
+        stop("Number of groups k must be an integer!")
+    }
+    if(!is.data.frame(data)){
+        stop("Data must be a data.frame!")
     }
     if(nrow(data) <= 0){
         stop("Data must have a positive number of rows!")
