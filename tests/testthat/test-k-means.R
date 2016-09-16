@@ -113,6 +113,8 @@ test_that("k-means algorithm outputs appropriately", {
     expect_true(k_means_execution$k > 0)
     expect_true(!is.na(k_means_execution$k))
 
+    expect_true(sum("aml_k_means" == class(k_means_execution)) == 1)
+
     expect_warning(aml_k_means(iris[,1:3], 10, maximum_iterations = 1))
 
     expect_true(is.data.frame(k_means_execution$data))

@@ -99,8 +99,13 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
                   centroids = results$roids, 
                   k = results$k,
                   data = results$data)
-    class(output) = c("aml_k_means", class(output))
+    output = .prepend_class(output, "aml_k_means")
     output
+}
+
+.prepend_class = function(input, class_to_add){
+    class(input) = c(class_to_add, class(input))
+    input
 }
 
 
