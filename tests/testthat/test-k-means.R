@@ -100,10 +100,18 @@ test_that("New label calculations based on distance are correct", {
 context("K-means output testing")
 
 test_that("K-means algorithm outputs appropriately", {
-    vect = aml_k_means(iris[, 1:4], 3)
+    k_means_execution = aml_k_means(iris[, 1:4], 3)
+
+    vect = k_means_execution$labels
     expect_true(all(vect %in% 1:3))
     expect_true(length(vect) == nrow(iris))
     expect_true(all(!is.null(vect)))
+
+    expect_true(identical(k_means_execution$data, iris[, 1:4]))
+    expect_true(k_means_execution$iter > 0)
+    expect_true(all(!is.na(k_means_execution$centroids)))
+    expect_true(k_means_execution$k > 0)
+    expect_true(!is.na(k_means_execution$k))
 })
 
 
