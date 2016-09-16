@@ -3,20 +3,20 @@
 #' AML k-Means
 #'
 #' Calculates k means predictions for given data. It is assumed that all
-#' given columns will be used in calculation
+#' given columns will be used in calculation.
 #'
 #' @param data Input n x p sized data.frame of data
 #' @param k Number of clusters to fit
 #' @return Vector of assigned cluster values
 #' @export
-aml_k_means = function(data, k){
+aml_k_means = function(data, k, maximum_iterations = 1e6){
     .test_input(data, k)
 
     new_labels = .find_initial_assignments(nrow(data), k)
     labels = rep(0, nrow(data))
     iter = 0
 
-    while(!all(labels == new_labels) & iter < 1000){
+    while(!all(labels == new_labels) & iter < maximum_iterations){
         labels = new_labels
         roids = .calculate_centroids(data, new_labels)
         distances = .calculate_distances_from_centroids(data, roids)
@@ -24,13 +24,18 @@ aml_k_means = function(data, k){
         iter = iter + 1
     }
 
-    new_labels
+    if(iter == maximum_iterations){
+        warning(paste("Convergence was not met, stopped at iteration", 
+                      maximum_iterations))
+    }
+
+    .create_output_object(new_labels, data, iter, roids, k)
 }
 
 #' Test input 
 #'
 #' This function will error-out early if any inputs to the aml_k_means function
-#' are unsatisfactory
+#' are unsatisfactory.
 #'
 #' @param data data.frame input of size n x p
 #' @param k Maximum label number (labels are integers 1,...,k)
@@ -55,7 +60,7 @@ aml_k_means = function(data, k){
 
 #' Find initial assignments
 #' 
-#' This function randomly assign starting labels to n points
+#' This function randomly assign starting labels to n points.
 #' 
 #' @param n Number of labels to assign (equal to nrow(data))
 #' @param k Maximum label (integers 1,...,k)
@@ -68,7 +73,7 @@ aml_k_means = function(data, k){
 
 #' Calculate centroids
 #' 
-#' This function calculates the data centroids for the given labels
+#' This function calculates the data centroids for the given labels.
 #' 
 #' @param data numeric data.frame of size n x p
 #' @param labels vector of labels of length n
@@ -84,7 +89,7 @@ aml_k_means = function(data, k){
 #' Calculate distances from centroids
 #' 
 #' This function calculates the pointwise distances from the given data points
-#' to the given centroids
+#' to the given centroids.
 #' 
 #' @param data numeric data.frame of size n x p
 #' @param centroids numeric data.frame of k x p
@@ -105,7 +110,7 @@ aml_k_means = function(data, k){
 #' Calculate new labels
 #' 
 #' This function calculates new integer labels based on the smallest distance
-#' where repeated min values go to the first occurrence of the min
+#' where repeated min values go to the first occurrence of the min.
 #' 
 #' @param distances list of length k with distances to centroids in order
 #' @return vector of length n with new integer labels
@@ -115,6 +120,24 @@ aml_k_means = function(data, k){
 }
 
 
-
+#' Create output object
+#' 
+#' This function creates a list object of class aml_k_means from the results.
+#' 
+#' @param labels Ordered labels assigned to poins by the algorithm
+#' @param data Data that was input into the algorithm 
+#' @param iter Number of iterations it took to exit loop 
+#' @param roids Calculated centroids returned by algorithm
+#' @param k Number of clusters fit by algorithm
+#' @return aml_k_means class object that includes all results
+.create_output_object = function(labels, data, iter, roids, k){
+    output = list(labels = labels, 
+                  iterations = iter,
+                  centroids = roids, 
+                  k = k,
+                  data = data)
+    class(output) = c("aml_k_means", class(output))
+    output
+}
 
 
