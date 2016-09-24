@@ -118,19 +118,31 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
 #' @param results_object 
 #' @return NULL
 #' @export
-plot.aml_k_means = function(results_object, plot_it = TRUE){
-    if(ncol(results_object$data) == 2){
-        print(names(results_object$data))
-        column_names = names(results_object$data)
-        ggplot_object = ggplot(results_object$data, 
-                               aes(x = .convert_to_ns(column_names[1]), 
-                                   y = .convert_to_ns(column_names[2]))) + 
-                            geom_point()
-    }
-    ggplot_object
+plot.aml_k_means = function(results_object){
+    ggplot_object = .make_ggplot_object(results_object)
+    plot(ggplot_object)
 }
 
-.convert_to_ns = function(string){
-    eval(parse(text = string))
+.make_ggplot_object = function(object){
+    UseMethod(".make_ggplot_object", object)
+}
+
+.make_ggplot_object.aml_k_means = function(results_object){
+    if(ncol(results_object$data) == 2){
+    column_names = names(results_object$data)
+    plotting_data = data.frame(results_object$data, 
+                               Labels = factor(results_object$labels))
+    ggplot_object = ggplot(plotting_data, 
+                           aes_string(x = column_names[1], 
+                                      y = column_names[2],
+                                      col = "Labels",
+                                      shape = "Labels")) + 
+                        geom_point(aes(shape = Labels), size = 2.1, col = "grey") +
+                        geom_point() +
+                        scale_color_viridis(discrete = TRUE)
+    }else{
+        # Dimension reduction and plotting here
+    }
+    ggplot_object
 }
 

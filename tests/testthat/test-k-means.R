@@ -96,8 +96,7 @@ test_that("New label calculations based on distance are correct", {
     )
 })
 
-
-context("k-means output testing")
+context("Output testing")
 
 test_that("k-means algorithm outputs appropriately", {
     k_means_execution = aml_k_means(iris[, 1:4], 3)
@@ -118,6 +117,21 @@ test_that("k-means algorithm outputs appropriately", {
     expect_warning(aml_k_means(iris[,1:3], 10, maximum_iterations = 1))
 
     expect_true(is.data.frame(k_means_execution$data))
+})
+
+test_that("k-means plotting functionality works", {
+    # Test 2 column input plotting first
+    k_means = aml_k_means(iris[, 1:2], 4)
+    ggp = .make_ggplot_object(k_means)
+
+    expect_true(all(is.na(ggp) == FALSE))
+    expect_true(all(c("ggplot", "gg") %in% class(ggp)))
+    expect_true(ncol(ggp$data) == (ncol(k_means$data) + 1))
+    expect_true(identical(ggp$data[,1:2], k_means$data))
+    expect_true(all(as.numeric(ggp$data$Labels) == k_means$labels))
+    expect_true(names(k_means$data)[1] == ggp$labels$x)
+    expect_true(names(k_means$data)[2] == ggp$labels$y)
+    expect_true(ggp$labels$colour == "Labels" & ggp$labels$shape == "Labels")
 })
 
 
