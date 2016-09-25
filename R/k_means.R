@@ -23,6 +23,7 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
 .run_algorithm_until_convergence = function(data, k, maximum_iterations){
     new_labels = .find_initial_assignments(nrow(data), k)
     labels = rep(0, nrow(data))
+    roids = .calculate_centroids(data, labels)
     iter = 0
 
     while(!all(labels == new_labels) & iter < maximum_iterations){
