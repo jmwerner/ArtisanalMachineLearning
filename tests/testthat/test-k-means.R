@@ -153,6 +153,24 @@ test_that("k-means plotting functionality works", {
     expect_true(names(ggp_2$data)[2] == "Principal Component II")
     expect_true(all(k_means$labels %in% 1:5))
     expect_true(ggp_2$labels$colour == "Labels" & ggp_2$labels$shape == "Labels")
+
+    ggp_2 = .make_ggplot_object(k_means_2, plot_centroids = TRUE)
+
+    expect_true(all(is.na(ggp_2) == FALSE))
+    expect_true(all(c("ggplot", "gg") %in% class(ggp_2)))
+    expect_true(ncol(ggp_2$data) == 3)
+
+    prcomp_object = prcomp(iris[, 1:4], center = TRUE, scale = TRUE)
+    test_frame = data.frame(prcomp_object$x[, 1:2])
+    names(test_frame) = c("Principal Component I", "Principal Component II")
+
+    expect_true(identical(ggp_2$data[, 1:2], test_frame))
+
+    expect_true(all(as.numeric(ggp_2$data$Labels) == k_means_2$labels))
+    expect_true(names(ggp_2$data)[1] == "Principal Component I")
+    expect_true(names(ggp_2$data)[2] == "Principal Component II")
+    expect_true(all(k_means$labels %in% 1:5))
+    expect_true(ggp_2$labels$colour == "Labels" & ggp_2$labels$shape == "Labels")
 })
 
 

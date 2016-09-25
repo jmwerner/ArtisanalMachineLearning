@@ -7,11 +7,13 @@
 
 As an exercise of professional development (but mostly for funzies) I will be writing many of the machine learning algorithms I know and love completely by hand from scratch. Doing such will help me achieve a 100% bullet-proof understanding of the algorithms and their deepest inner-workings. Feel free to submit issues for any problems or suggestions, I'm always willing to discuss and/or code review!
 
-Potential Algorithms
-* k-means
-* SVM
-* kNN
-* Decision trees
-  - Random Forest
-  - GBM
+
+### Implemented Algorithms
+
+    * [k-Means](http://jmwerner.github.io/ArtisanalMachineLearning/inst/doc/k-means.html)
+
+### In Progress / On Deck
+
+* Random Forest
+* GBM
 * Neural networks/Deep learning

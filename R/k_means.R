@@ -119,16 +119,16 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
 #' @param results_object 
 #' @return NULL
 #' @export
-plot.aml_k_means = function(results_object){
-    ggplot_object = .make_ggplot_object(results_object)
+plot.aml_k_means = function(results_object, plot_centroids = FALSE){
+    ggplot_object = .make_ggplot_object(results_object, plot_centroids)
     plot(ggplot_object)
 }
 
-.make_ggplot_object = function(object){
+.make_ggplot_object = function(object, plot_centroids){
     UseMethod(".make_ggplot_object", object)
 }
 
-.make_ggplot_object.aml_k_means = function(results_object){
+.make_ggplot_object.aml_k_means = function(results_object, plot_centroids = FALSE){
     if(ncol(results_object$data) == 2){
         column_names = names(results_object$data)
         plotting_data = data.frame(results_object$data, 
@@ -141,6 +141,7 @@ plot.aml_k_means = function(results_object){
                                    factor(results_object$labels))
         names(plotting_data) = c(column_names, "Labels")
     }
+    
     ggplot_object = ggplot(plotting_data, 
                         aes_string(x = .convert_to_ggname(column_names[1]), 
                                    y = .convert_to_ggname(column_names[2]),
@@ -150,7 +151,20 @@ plot.aml_k_means = function(results_object){
                                    size = 2.1, 
                                    col = "grey") +
                         geom_point() +
-                        scale_color_viridis(discrete = TRUE)
+                        scale_color_viridis(discrete = TRUE) 
+
+    if(plot_centroids){
+        centroids = aggregate(as.matrix(plotting_data[, column_names]) ~ Labels, 
+                              plotting_data, 
+                              mean)
+        ggplot_object = ggplot_object + 
+                            geom_point(data = centroids, 
+                                       size = 6, 
+                                       col = "grey") + 
+                            geom_point(data = centroids, size = 5)
+
+    }
+
     ggplot_object
 }
 

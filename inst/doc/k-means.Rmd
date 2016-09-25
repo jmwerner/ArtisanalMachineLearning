@@ -9,15 +9,74 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-k-means is a very simple algorithm that 
+k-means is a fairly simple algorithm that iteratively cycles through data of dimension $n \times p$ and assigns labels to clusters of points based on their distance from centroids at each step in the algorithm. The centroids are plotted optionally and are indicated by the oversized icons of the same shape and color of the labeled points. 
 
 
-## Figures
+Consider the following examples that utilize the iris data set. 
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r}
+library(ArtisanalMachineLearning)
+data(iris)
 ```
+
+## Example 1
+
+Sepal Width and Petal Length from the iris data set being grouped into $k = 2$ groups.
+
+```{r}
+data = iris[,2:3]
+head(data)
+```
+
+#### Step 1
+
+Points are randomly assigned and the initial centroids are calculated.
+
+```{r, fig.width = 6, fig.height = 4}
+k_means = aml_k_means(data, k = 2, maximum_iterations = 0)
+plot(k_means, plot_centroids = TRUE)
+```
+
+#### Step 2
+
+Points are reassigned new labels based on the label of the closest centroid by euclidian distance. 
+
+```{r, fig.width = 6, fig.height = 4}
+k_means = aml_k_means(data, k = 2, maximum_iterations = 1)
+plot(k_means, plot_centroids = TRUE)
+```
+
+#### Step 3
+
+This is repeated until the maximum number of iterations is met or the algorithm converges and does not change pointwise label assignments between iterations. 
+
+```{r, fig.width = 6, fig.height = 4}
+k_means = aml_k_means(data, k = 2)
+plot(k_means, plot_centroids = TRUE)
+```
+
+This convergence was achieved in the following number of iterations.
+
+```{r}
+k_means$iterations
+```
+
+## Example 2
+
+Consider a data set with more than 2 dimensions. The same euclidian distance based pointwise relabeling applies, but visualization requires dimensionality reduction. Thus, the first two principal components are displayed.
+
+
+```{r}
+data = iris[,1:4]
+head(data)
+```
+
+#### Run algorithm
+
+```{r, fig.width = 6, fig.height = 4}
+k_means = aml_k_means(data, k = 5)
+plot(k_means, plot_centroids = TRUE)
+```
+
+Even though we selected 5 clusters, only 3 were returned. This is not an error, as it's possible for entire clusters to be eliminated if no points are close enough to that cluster's centroid during convergence. 
 
