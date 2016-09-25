@@ -129,20 +129,42 @@ plot.aml_k_means = function(results_object){
 
 .make_ggplot_object.aml_k_means = function(results_object){
     if(ncol(results_object$data) == 2){
-    column_names = names(results_object$data)
-    plotting_data = data.frame(results_object$data, 
-                               Labels = factor(results_object$labels))
+        column_names = names(results_object$data)
+        plotting_data = data.frame(results_object$data, 
+                                   Labels = factor(results_object$labels))
+    }else{
+        column_names = c("Principal Component I",
+                         "Principal Component II")
+        prcomp_object = prcomp(results_object$data, center = TRUE, scale = TRUE)
+        plotting_data = data.frame(prcomp_object$x[, 1:2], 
+                                   factor(results_object$labels))
+        names(plotting_data) = c(column_names, "Labels")
+    }
     ggplot_object = ggplot(plotting_data, 
-                           aes_string(x = column_names[1], 
-                                      y = column_names[2],
-                                      col = "Labels",
-                                      shape = "Labels")) + 
-                        geom_point(aes(shape = Labels), size = 2.1, col = "grey") +
+                        aes_string(x = .convert_to_ggname(column_names[1]), 
+                                   y = .convert_to_ggname(column_names[2]),
+                                   col = "Labels",
+                                   shape = "Labels")) + 
+                        geom_point(aes(shape = Labels), 
+                                   size = 2.1, 
+                                   col = "grey") +
                         geom_point() +
                         scale_color_viridis(discrete = TRUE)
-    }else{
-        # Dimension reduction and plotting here
-    }
     ggplot_object
+}
+
+.convert_to_ggname = function(x){
+    if(class(x) != "character") {
+        return(x)
+    }
+    y = sapply(x, function(s){
+        if (!grepl("^`", s)){
+            s = paste("`", s, sep="", collapse="")
+        }
+        if (!grepl("`$", s)){
+            s = paste(s, "`", sep="", collapse="")
+        }
+    })
+    y 
 }
 
