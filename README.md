@@ -10,7 +10,7 @@ As an exercise of professional development (but mostly for funzies) I will be wr
 
 ### Implemented Algorithms
 
-    * [k-Means](http://jmwerner.github.io/ArtisanalMachineLearning/inst/doc/k-means.html)
+* [k-Means](http://jmwerner.github.io/ArtisanalMachineLearning/inst/doc/k-means.html)
 
 ### In Progress / On Deck
 
