@@ -4,10 +4,15 @@
 \alias{plot.aml_k_means}
 \title{AML k-means default plot function}
 \usage{
-\method{plot}{aml_k_means}(results_object, plot_it = TRUE)
+\method{plot}{aml_k_means}(results_object, plot_centroids = FALSE,
+  tsne_reduction = FALSE)
 }
 \arguments{
-\item{results_object}{}
+\item{results_object}{Results object returned by aml_k_means function}
+
+\item{plot_centroids}{Logical to plot centroids along with points}
+
+\item{tsne_reduction}{Logical to use t-SNE for dimensionality reduction}
 }
 \description{
 Plots a basic k-means scatterplot graph based on given results. Will plot a 

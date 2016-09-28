@@ -116,30 +116,49 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
 #' scatterplot of the first two principal components if data has more than 2 
 #' columns.
 #'
-#' @param results_object 
+#' @param results_object Results object returned by aml_k_means function 
+#' @param plot_centroids Logical to plot centroids along with points
+#' @param tsne_reduction Logical to use t-SNE for dimensionality reduction
 #' @return NULL
 #' @export
-plot.aml_k_means = function(results_object, plot_centroids = FALSE){
-    ggplot_object = .make_ggplot_object(results_object, plot_centroids)
+plot.aml_k_means = function(results_object, 
+                            plot_centroids = FALSE,
+                            tsne_reduction = FALSE){
+    ggplot_object = .make_ggplot_object(results_object, 
+                                        plot_centroids, 
+                                        tsne_reduction)
     plot(ggplot_object)
 }
 
-.make_ggplot_object = function(object, plot_centroids){
+.make_ggplot_object = function(object, plot_centroids, tsne_reduction){
     UseMethod(".make_ggplot_object", object)
 }
 
-.make_ggplot_object.aml_k_means = function(results_object, plot_centroids = FALSE){
+.make_ggplot_object.aml_k_means = function(results_object, 
+                                           plot_centroids = FALSE,
+                                           tsne_reduction = FALSE){
     if(ncol(results_object$data) == 2){
         column_names = names(results_object$data)
         plotting_data = data.frame(results_object$data, 
                                    Labels = factor(results_object$labels))
     }else{
-        column_names = c("Principal Component I",
-                         "Principal Component II")
-        prcomp_object = prcomp(results_object$data, center = TRUE, scale = TRUE)
-        plotting_data = data.frame(prcomp_object$x[, 1:2], 
-                                   factor(results_object$labels))
-        names(plotting_data) = c(column_names, "Labels")
+        if(tsne_reduction){
+            column_names = c("TSNE I",
+                             "TSNE II")
+            tsne_object = Rtsne(results_object$data, check_duplicates = FALSE)
+            plotting_data = data.frame(tsne_object$Y, 
+                                       factor(results_object$labels))
+            names(plotting_data) = c(column_names, "Labels")
+        }else{
+            column_names = c("Principal Component I",
+                             "Principal Component II")
+            prcomp_object = prcomp(results_object$data, 
+                                   center = TRUE, 
+                                   scale = TRUE)
+            plotting_data = data.frame(prcomp_object$x[, 1:2], 
+                                       factor(results_object$labels))
+            names(plotting_data) = c(column_names, "Labels")
+        }
     }
     
     ggplot_object = ggplot(plotting_data, 

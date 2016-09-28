@@ -32,7 +32,7 @@ head(data)
 
 Points are randomly assigned and the initial centroids are calculated.
 
-```{r, fig.width = 6, fig.height = 4}
+```{r, fig.width = 7, fig.height = 5}
 k_means = aml_k_means(data, k = 2, maximum_iterations = 0)
 plot(k_means, plot_centroids = TRUE)
 ```
@@ -41,7 +41,7 @@ plot(k_means, plot_centroids = TRUE)
 
 Points are reassigned new labels based on the label of the closest centroid by euclidian distance. 
 
-```{r, fig.width = 6, fig.height = 4}
+```{r, fig.width = 7, fig.height = 5}
 k_means = aml_k_means(data, k = 2, maximum_iterations = 1)
 plot(k_means, plot_centroids = TRUE)
 ```
@@ -50,7 +50,7 @@ plot(k_means, plot_centroids = TRUE)
 
 This is repeated until the maximum number of iterations is met or the algorithm converges and does not change pointwise label assignments between iterations. 
 
-```{r, fig.width = 6, fig.height = 4}
+```{r, fig.width = 7, fig.height = 5}
 k_means = aml_k_means(data, k = 2)
 plot(k_means, plot_centroids = TRUE)
 ```
@@ -73,10 +73,16 @@ head(data)
 
 #### Run algorithm
 
-```{r, fig.width = 6, fig.height = 4}
+```{r, fig.width = 7, fig.height = 5}
 k_means = aml_k_means(data, k = 5)
 plot(k_means, plot_centroids = TRUE)
 ```
 
 Even though we selected 5 clusters, only 3 were returned. This is not an error, as it's possible for entire clusters to be eliminated if no points are close enough to that cluster's centroid during convergence. 
 
+Also, keep in mind we are seeing data that has been reduced via principal component analysis, so the seemingly mislabeled points are not errors. AML also supports t-SNE dimensionality reduction for potential better viewing of clusters. 
+
+```{r, fig.width = 7, fig.height = 5}
+k_means = aml_k_means(data, k = 5)
+plot(k_means, plot_centroids = TRUE, tsne_reduction = TRUE)
+```

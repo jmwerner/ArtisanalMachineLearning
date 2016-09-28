@@ -171,6 +171,48 @@ test_that("k-means plotting functionality works", {
     expect_true(names(ggp_2$data)[2] == "Principal Component II")
     expect_true(all(k_means$labels %in% 1:5))
     expect_true(ggp_2$labels$colour == "Labels" & ggp_2$labels$shape == "Labels")
+
+    png("test1.png")
+        plot(k_means)
+    dev.off()
+
+    png("test2.png")
+        plot(k_means_2)
+    dev.off()
+
+    png("test3.png")
+        plot(k_means_2, tsne_reduction = TRUE)
+    dev.off()
+
+    expect_true(file.exists("test1.png"))
+    file.remove("test1.png")
+
+    expect_true(file.exists("test2.png"))
+    file.remove("test2.png")
+
+    expect_true(file.exists("test3.png"))
+    file.remove("test3.png")
+
+    png("test1.png")
+        plot(k_means, plot_centroids = TRUE)
+    dev.off()
+
+    png("test2.png")
+        plot(k_means_2, plot_centroids = TRUE)
+    dev.off()
+
+    png("test3.png")
+        plot(k_means_2, plot_centroids = TRUE, tsne_reduction = TRUE)
+    dev.off()
+
+    expect_true(file.exists("test1.png"))
+    file.remove("test1.png")
+
+    expect_true(file.exists("test2.png"))
+    file.remove("test2.png")
+
+    expect_true(file.exists("test3.png"))
+    file.remove("test3.png")
 })
 
 
