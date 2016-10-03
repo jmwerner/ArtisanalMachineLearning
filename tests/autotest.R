@@ -1,3 +1,7 @@
 #!/usr/bin/env Rscript
 
-library(testthat);auto_test_package()
+library(ArtisanalMachineLearning)
+library(testthat)
+library(devtools)
+
+auto_test_package()
