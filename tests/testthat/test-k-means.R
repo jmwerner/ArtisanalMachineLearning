@@ -134,6 +134,11 @@ test_that("k-means plotting functionality works", {
     expect_true(all(k_means$labels %in% 1:4))
     expect_true(ggp$labels$colour == "Labels" & ggp$labels$shape == "Labels")
 
+    # Test .convert_to_ggname
+    expect_identical(.convert_to_ggname(1:5), 1:5)
+    expect_true(.convert_to_ggname("hello") == "`hello`")
+    expect_true(.convert_to_ggname('hello, i like "cheese"') == '`hello, i like \"cheese\"`')
+
     # Test alm_k_means with dimensionality reduction in plotting
     k_means_2 = aml_k_means(iris[, 1:4], 5)
     ggp_2 = .make_ggplot_object(k_means_2)
