@@ -3,6 +3,14 @@
 #' @export
 aml_neural_network <- function(sizes, learning_rate){
     .test_neural_network_input(sizes)
+
+
+    # TEST RUNNING
+
+    sizes = c(2,3,1)
+
+    initial_network = .initialize_random_network(sizes)
+
 }
 
 .test_neural_network_input <- function(sizes){
@@ -20,6 +28,11 @@ aml_neural_network <- function(sizes, learning_rate){
 
 .calculate_sigmoid <- function(z){
     1 / (1 + exp(-z))
+}
+
+.calculate_sigmoid_prime <- function(z){
+    sigmoid = .calculate_sigmoid(z) 
+    sigmoid * (1 - sigmoid)
 }
 
 .initialize_random_network <- function(sizes){
