@@ -1,5 +1,3 @@
-# This script contains all functions for the k means algorithm
-
 #' AML k-Means
 #'
 #' Calculates k means predictions for given data. It is assumed that all
