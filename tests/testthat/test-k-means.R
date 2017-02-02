@@ -1,7 +1,7 @@
 # Use iris for unit testing
 data(iris)
 
-context("Input testing")
+context("k-means input testing")
 
 test_that("Erroneous input returns error", {
     expect_error(aml_k_means(iris, -1))
@@ -13,7 +13,7 @@ test_that("Erroneous input returns error", {
     expect_error(aml_k_means(data.frame(letters[1:5], 1:5), 1))
 })
 
-context("Internal algorithm testing")
+context("k-means internal algorithm testing")
 
 test_that("Initial assignments are returning integers", {
     all_initial_assignment_tests = sapply(1:20, function(k){
@@ -96,7 +96,7 @@ test_that("New label calculations based on distance are correct", {
     )
 })
 
-context("Output testing")
+context("k-means output testing")
 
 test_that("k-means algorithm outputs appropriately", {
     k_means_execution = aml_k_means(iris[, 1:4], 3)

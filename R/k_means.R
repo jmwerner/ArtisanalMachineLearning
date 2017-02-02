@@ -10,15 +10,15 @@
 #' @return Results object of class aml_k_means
 #' @export
 aml_k_means = function(data, k, maximum_iterations = 1e6){
-    .test_input(data, k)
+    .test_k_means_input(data, k)
 
-    results = .run_algorithm_until_convergence(data, k, maximum_iterations)
+    results = .run_k_means_until_convergence(data, k, maximum_iterations)
 
-    .create_output_object(results)
+    .create_k_means_output_object(results)
 }
 
 
-.run_algorithm_until_convergence = function(data, k, maximum_iterations){
+.run_k_means_until_convergence = function(data, k, maximum_iterations){
     new_labels = .find_initial_assignments(nrow(data), k)
     labels = rep(0, nrow(data))
     roids = .calculate_centroids(data, labels)
@@ -44,7 +44,7 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
          k = k)
 }
 
-.test_input = function(data, k){
+.test_k_means_input = function(data, k){
     if(k <= 0){
         stop("Number of groups k must be positive!")
     }
@@ -92,7 +92,7 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
     apply(matrix_of_distances, 1, which.min)
 }
 
-.create_output_object = function(results){
+.create_k_means_output_object = function(results){
     output = list(labels = results$new_labels, 
                   iterations = results$iter,
                   centroids = results$roids, 
