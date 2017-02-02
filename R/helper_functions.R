@@ -3,3 +3,4 @@
     class(input) = c(class_to_add, class(input))
     input
 }
+

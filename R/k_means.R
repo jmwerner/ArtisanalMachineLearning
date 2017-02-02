@@ -102,12 +102,6 @@ aml_k_means = function(data, k, maximum_iterations = 1e6){
     output
 }
 
-.prepend_class = function(input, class_to_add){
-    class(input) = c(class_to_add, class(input))
-    input
-}
-
-
 #' AML k-means default plot function
 #'
 #' Plots a basic k-means scatterplot graph based on given results. Will plot a 
