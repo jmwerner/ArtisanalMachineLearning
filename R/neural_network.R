@@ -4,7 +4,7 @@
 #' @param training_data Data for training network, 
 #' dimension nxp where p is sizes[1]
 #' @export
-aml_neural_network <- function(sizes, learning_rate, data){
+aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL){
     .test_neural_network_input(sizes)
 
 
@@ -12,10 +12,18 @@ aml_neural_network <- function(sizes, learning_rate, data){
 
     sizes = c(2,3,1)
 
+    data = data.frame(x = rnorm(15), y = runif(15))
+
+    epochs = 10
+
+    eta = 3.0
+
     initial_network = .initialize_random_network(sizes)
 
-    .feed_forward(initial_network, c(10, 20))
+    activations = .feed_forward(initial_network, t(as.matrix(data[1,])))
 
+    # "Mini batch" is entire set right now 
+    # http://neuralnetworksanddeeplearning.com/chap1.html
 }
 
 .test_neural_network_input <- function(sizes){
@@ -60,15 +68,14 @@ aml_neural_network <- function(sizes, learning_rate, data){
 }
 
 .feed_forward <- function(network, observation){
-    network_output = .calculate_output_a(network, 
-                                         observation, 
-                                         length(network$weights))
+    network_output = lapply(1:length(network$weights), function(x){
+        .calculate_activations(network, observation, x)
+    })
 
     network_output
 }
 
-
-.calculate_output_a <- function(network, observation, layer){
+.calculate_activations <- function(network, observation, layer){
     if(layer == 1){
         z = do.call(cbind, network$weights[[layer]]) %*% observation + 
                 network$biases[[layer]]
@@ -82,10 +89,28 @@ aml_neural_network <- function(sizes, learning_rate, data){
     output
 }
 
+.back_propogation <- function(network, data, epochs, learning_rate){
+    for(epoch_number in 1:epochs){
+        print(paste("Epoch: ", epoch_number))
 
+        activations = .feed_forward()
 
+        network = .update_network(network, data, learning_rate)
+    }
+    network
+}
 
+.update_network <- function(network, data, learning_rate){
+    .compute_deltas()
+    .
+}
 
+.compute_deltas <- function(){
 
+}
+
+.compute_cost_derivative <- function(output_activations, y){
+    output_activations - y
+}
 
 
