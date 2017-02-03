@@ -1,7 +1,10 @@
 
 # PUT ROXYGEN HERE
+#' @param sizes Vector of integer values corresponding to layer sizes 
+#' @param training_data Data for training network, 
+#' dimension nxp where p is sizes[1]
 #' @export
-aml_neural_network <- function(sizes, learning_rate){
+aml_neural_network <- function(sizes, learning_rate, data){
     .test_neural_network_input(sizes)
 
 
@@ -10,6 +13,8 @@ aml_neural_network <- function(sizes, learning_rate){
     sizes = c(2,3,1)
 
     initial_network = .initialize_random_network(sizes)
+
+    .feed_forward(initial_network, c(10, 20))
 
 }
 
@@ -53,6 +58,34 @@ aml_neural_network <- function(sizes, learning_rate){
     output = .prepend_class(output, "aml_neural_network")
     output
 }
+
+.feed_forward <- function(network, observation){
+    network_output = .calculate_output_a(network, 
+                                         observation, 
+                                         length(network$weights))
+
+    network_output
+}
+
+
+.calculate_output_a <- function(network, observation, layer){
+    if(layer == 1){
+        z = do.call(cbind, network$weights[[layer]]) %*% observation + 
+                network$biases[[layer]]
+        output = .calculate_sigmoid(z)
+    }else{
+        z = do.call(cbind, network$weights[[layer]]) %*% 
+                .calculate_a(network, observation, layer - 1) + 
+                network$biases[[layer]]
+        output = .calculate_sigmoid(z)
+    }
+    output
+}
+
+
+
+
+
 
 
 

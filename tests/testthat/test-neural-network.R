@@ -15,6 +15,7 @@ context("neural network internal algorithm testing")
 test_that("Sigmoid functions work properly", {
     expect_true(abs(.calculate_sigmoid(5) - .9933071) < .0000001)
     expect_true(abs(.calculate_sigmoid(-10) - 4.539787e-05) < .0000001)
+    expect_true(all(abs(.calculate_sigmoid(c(-10, -10)) - rep(4.539787e-05, 2)) < rep(.0000001, 2)))
     expect_error(.calculate_sigmoid("abc"))
     expect_true(abs(.calculate_sigmoid_prime(5) - 0.006648057) < .0000001)
     expect_true(abs(.calculate_sigmoid_prime(-10) - 4.539581e-05) < .0000001)
@@ -43,6 +44,9 @@ test_that("Random network initialization works properly", {
     expect_identical(lapply(random_net$weights[[2]], length), 
                      list(as.integer(3), as.integer(3)))
 })
+
+
+# TODO test feed forward (and for multiple nodes in output layer)
 
 ################################################################################
 context("neural network output testing")
