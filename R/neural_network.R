@@ -8,9 +8,9 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
     .test_neural_network_input(sizes)
 
 
-    # TEST RUNNING
+    # TEST RUNNING - following book example
 
-    sizes = c(2,3,1)
+    sizes = c(1,2,1,1)
 
     data = data.frame(x = rnorm(15), y = runif(15))
 
@@ -20,7 +20,23 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
 
     initial_network = .initialize_random_network(sizes)
 
-    activations = .feed_forward(initial_network, t(as.matrix(data[1,])))
+    initial_network$weights[[1]][[1]] = c(.1, .2)
+    initial_network$weights[[1]][[2]] = c(.3, .4)
+
+    initial_network$weights[[2]][[1]] = .2
+    initial_network$weights[[2]][[2]] = 1
+    initial_network$weights[[2]][[3]] = -3
+
+    initial_network$weights[[3]][[1]] = 1
+    initial_network$weights[[3]][[2]] = 2
+
+
+    data_obs = c(2)
+
+    # Check matrix dims here (will need transpose when slicing)
+    activations = .feed_forward(initial_network, as.matrix(data_obs))
+
+    deltas = .compute_deltas(initial_network, activations)
 
     # "Mini batch" is entire set right now 
     # http://neuralnetworksanddeeplearning.com/chap1.html
@@ -39,21 +55,20 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
     }
 }
 
-.calculate_sigmoid <- function(z){
-    1 / (1 + exp(-z))
+.calculate_transformation <- function(z){
+    tanh(z)
 }
 
-.calculate_sigmoid_prime <- function(z){
-    sigmoid = .calculate_sigmoid(z) 
-    sigmoid * (1 - sigmoid)
+.calculate_transformation_prime <- function(z){
+    1 - tanh(z)^2
 }
 
 .initialize_random_network <- function(sizes){
     layers = length(sizes)
-    biases = lapply(sizes[-1], rnorm)
     weights = lapply(2:layers, function(index){
+        # Add one for bias term
+        number_of_nodes_in_previous_layer = sizes[index - 1] + 1
         number_of_nodes_in_current_layer = sizes[index]
-        number_of_nodes_in_previous_layer = sizes[index-1]
         lapply(1:number_of_nodes_in_previous_layer, function(x){
             rnorm(number_of_nodes_in_current_layer)
         })
@@ -61,7 +76,6 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
 
     output = list(sizes = sizes, 
                   layers = layers, 
-                  biases = biases, 
                   weights = weights)
     output = .prepend_class(output, "aml_neural_network")
     output
@@ -77,14 +91,13 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
 
 .calculate_activations <- function(network, observation, layer){
     if(layer == 1){
-        z = do.call(cbind, network$weights[[layer]]) %*% observation + 
-                network$biases[[layer]]
-        output = .calculate_sigmoid(z)
+        # Cat observation with 1 for the bias term
+        z = do.call(cbind, network$weights[[layer]]) %*% as.matrix(c(1, observation))
+        output = .calculate_transformation(z)
     }else{
         z = do.call(cbind, network$weights[[layer]]) %*% 
-                .calculate_a(network, observation, layer - 1) + 
-                network$biases[[layer]]
-        output = .calculate_sigmoid(z)
+                as.matrix(c(1, .calculate_activations(network, observation, layer - 1)))
+        output = .calculate_transformation(z)
     }
     output
 }
@@ -105,9 +118,9 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
     .
 }
 
-.compute_deltas <- function(){
+# .compute_deltas <- function(){
 
-}
+# }
 
 .compute_cost_derivative <- function(output_activations, y){
     output_activations - y
