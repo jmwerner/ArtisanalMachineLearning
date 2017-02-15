@@ -7,40 +7,32 @@
 aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL){
     .test_neural_network_input(sizes)
 
-
     # TEST RUNNING - following book example
 
     sizes = c(1,2,1,1)
 
     data = data.frame(x = rnorm(15), y = runif(15))
 
-    epochs = 10
+    epochs = 1
 
-    eta = 3.0
+    learning_rate = .1
 
     initial_network = .initialize_random_network(sizes)
 
-    initial_network$weights[[1]][[1]] = c(.1, .2)
-    initial_network$weights[[1]][[2]] = c(.3, .4)
+    initial_network$weights[[1]] = matrix(c(.1, .2, .3, .4), 2, 2, byrow = TRUE)
 
-    initial_network$weights[[2]][[1]] = .2
-    initial_network$weights[[2]][[2]] = 1
-    initial_network$weights[[2]][[3]] = -3
+    initial_network$weights[[2]] = matrix(c(.2, 1, -3))
 
-    initial_network$weights[[3]][[1]] = 1
-    initial_network$weights[[3]][[2]] = 2
-
+    initial_network$weights[[3]] = matrix(1:2)
 
     data_obs = c(2)
+    response = 1
 
-    # Check matrix dims here (will need transpose when slicing)
-    activations = .feed_forward(initial_network, as.matrix(data_obs))
+    processed_network = .back_propogation(initial_network, data_obs, epochs, learning_rate)
 
-    deltas = .compute_deltas(initial_network, activations)
-
-    # "Mini batch" is entire set right now 
-    # http://neuralnetworksanddeeplearning.com/chap1.html
 }
+
+################################################################################
 
 .test_neural_network_input <- function(sizes){
     if(length(sizes) < 2){
@@ -69,9 +61,10 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
         # Add one for bias term
         number_of_nodes_in_previous_layer = sizes[index - 1] + 1
         number_of_nodes_in_current_layer = sizes[index]
-        lapply(1:number_of_nodes_in_previous_layer, function(x){
+        weight_list = lapply(1:number_of_nodes_in_previous_layer, function(x){
             rnorm(number_of_nodes_in_current_layer)
         })
+        do.call(cbind, weight_list)
     })
 
     output = list(sizes = sizes, 
@@ -85,45 +78,66 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
     network_output = lapply(1:length(network$weights), function(x){
         .calculate_activations(network, observation, x)
     })
-
     network_output
 }
 
 .calculate_activations <- function(network, observation, layer){
     if(layer == 1){
         # Cat observation with 1 for the bias term
-        z = do.call(cbind, network$weights[[layer]]) %*% as.matrix(c(1, observation))
-        output = .calculate_transformation(z)
+        s = t(network$weights[[layer]]) %*% as.matrix(c(1, observation))
+        output = .calculate_transformation(s)
     }else{
-        z = do.call(cbind, network$weights[[layer]]) %*% 
-                as.matrix(c(1, .calculate_activations(network, observation, layer - 1)))
-        output = .calculate_transformation(z)
+        s = t(network$weights[[layer]]) %*% 
+            as.matrix(c(1, .calculate_activations(network, observation, layer - 1)$output))
+        output = .calculate_transformation(s)
     }
-    output
+    list(output = output, s = s)
 }
 
 .back_propogation <- function(network, data, epochs, learning_rate){
     for(epoch_number in 1:epochs){
         print(paste("Epoch: ", epoch_number))
 
-        activations = .feed_forward()
+        activations = .feed_forward(network, as.matrix(data_obs))
 
-        network = .update_network(network, data, learning_rate)
+        deltas = .compute_deltas(network, activations, response)
+
+        partial_derivatives = .calculate_partial_derivatives(activations, deltas, data_obs)
+
+        network = .update_network(network, partial_derivatives, learning_rate)
     }
     network
 }
 
-.update_network <- function(network, data, learning_rate){
-    .compute_deltas()
-    .
+.update_network <- function(network, partial_derivatives, learning_rate){
+    for(i in 1:length(network$weights)){
+        network$weights[[i]] = network$weights[[i]] + learning_rate * partial_derivatives[[i]]
+    }
+    network
 }
 
-# .compute_deltas <- function(){
-
-# }
-
-.compute_cost_derivative <- function(output_activations, y){
-    output_activations - y
+.compute_deltas <- function(network, activations, response){
+    deltas = list()
+    for(i in (network$layers - 1):1){
+        if(i == (network$layers - 1)){
+            deltas[[i]] = 2 * (activations[[i]]$output - response) * 
+                .calculate_transformation_prime(activations[[i]]$s)
+        }else{
+            deltas[[i]] = (1 - activations[[i]]$output ^ 2) *
+                as.matrix(unlist(network$weights[[i + 1]][-1])) %*% deltas[[i + 1]] 
+        }
+    }
+    deltas
 }
 
-
+.calculate_partial_derivatives <- function(activations, deltas, data_obs){
+    partial_derivatives = list()
+    for(i in 1:length(activations)){
+        if(i == 1){
+            partial_derivatives[[i]] = matrix(c(1,data_obs))%*% t(deltas[[1]])
+        }else{
+            partial_derivatives[[i]] = matrix(c(1, activations[[i - 1]]$output)) %*% unlist(deltas[[i]])  
+        }
+    }
+    partial_derivatives
+}
