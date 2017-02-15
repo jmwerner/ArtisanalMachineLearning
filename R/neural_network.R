@@ -64,7 +64,7 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
         weight_list = lapply(1:number_of_nodes_in_previous_layer, function(x){
             rnorm(number_of_nodes_in_current_layer)
         })
-        do.call(cbind, weight_list)
+        do.call(rbind, weight_list)
     })
 
     output = list(sizes = sizes, 
@@ -95,6 +95,9 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
 }
 
 .back_propogation <- function(network, data, epochs, learning_rate){
+    # FIX THIS
+    # data_obs = 
+    # response = 
     for(epoch_number in 1:epochs){
         print(paste("Epoch: ", epoch_number))
 
@@ -124,7 +127,7 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
                 .calculate_transformation_prime(activations[[i]]$s)
         }else{
             deltas[[i]] = (1 - activations[[i]]$output ^ 2) *
-                as.matrix(unlist(network$weights[[i + 1]][-1])) %*% deltas[[i + 1]] 
+                as.matrix(network$weights[[i + 1]][-1,]) %*% deltas[[i + 1]] 
         }
     }
     deltas
@@ -134,9 +137,9 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
     partial_derivatives = list()
     for(i in 1:length(activations)){
         if(i == 1){
-            partial_derivatives[[i]] = matrix(c(1,data_obs))%*% t(deltas[[1]])
+            partial_derivatives[[i]] = matrix(c(1,data_obs))%*% t(deltas[[i]])
         }else{
-            partial_derivatives[[i]] = matrix(c(1, activations[[i - 1]]$output)) %*% unlist(deltas[[i]])  
+            partial_derivatives[[i]] = matrix(c(1, activations[[i - 1]]$output)) %*% t(deltas[[i]])  
         }
     }
     partial_derivatives
