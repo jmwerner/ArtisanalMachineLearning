@@ -13,13 +13,13 @@ context("neural network internal algorithm testing")
 ################################################################################
 
 test_that("Sigmoid functions work properly", {
-    expect_true(abs(.calculate_sigmoid(5) - .9933071) < .0000001)
-    expect_true(abs(.calculate_sigmoid(-10) - 4.539787e-05) < .0000001)
-    expect_true(all(abs(.calculate_sigmoid(c(-10, -10)) - rep(4.539787e-05, 2)) < rep(.0000001, 2)))
-    expect_error(.calculate_sigmoid("abc"))
-    expect_true(abs(.calculate_sigmoid_prime(5) - 0.006648057) < .0000001)
-    expect_true(abs(.calculate_sigmoid_prime(-10) - 4.539581e-05) < .0000001)
-    expect_error(.calculate_sigmoid_prime("abc"))
+    expect_true(abs(.calculate_transformation(5) - 0.9999092) < .0000001)
+    expect_true(abs(.calculate_transformation(-10) + 1) < .0000001)
+    expect_true(all(abs(.calculate_transformation(c(-10, -10)) - rep(-1, 2)) < rep(.0000001, 2)))
+    expect_error(.calculate_transformation("abc"))
+    expect_true(abs(.calculate_transformation_prime(5) - 0.0001815832) < .0000001)
+    expect_true(abs(.calculate_transformation_prime(-10) - 8.244615e-09) < .0000001)
+    expect_error(.calculate_transformation_prime("abc"))
 })
 
 test_that("Random network initialization works properly", {
