@@ -5,7 +5,7 @@
 #' @param response Response vector of size nx1 corresponding to the training
 #' data
 #' @export
-aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NULL, epochs = NULL, verbose = FALSE){
+aml_neural_network <- function(sizes, learning_rate, data=NULL, response=NULL, epochs=NULL, verbose=FALSE){
     .test_neural_network_input(sizes, learning_rate, data, response, epochs, verbose)
 
     initial_network = .initialize_random_network(sizes)
@@ -103,7 +103,7 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NUL
     list(output = output, s = s)
 }
 
-.back_propogation <- function(network, data, response, epochs, learning_rate, verbose){
+.back_propogation <- function(network, data, response, epochs, learning_rate, verbose=FALSE){
     for(epoch_number in 1:epochs){
         if(verbose){
             print(paste(date(), "|", "Epoch:", epoch_number, "starting..."))
