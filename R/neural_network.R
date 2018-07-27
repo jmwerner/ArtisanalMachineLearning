@@ -1,35 +1,17 @@
 
 # PUT ROXYGEN HERE
 #' @param sizes Vector of integer values corresponding to layer sizes 
-#' @param training_data Data for training network, 
+#' @param training_data Input data.frame for training network, 
 #' dimension nxp where p is sizes[1]
+#' @param response Response vector of size nx1 corresponding to the training
+#' data
 #' @export
-aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL){
+aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NULL, epochs = NULL){
     .test_neural_network_input(sizes)
 
-    # TEST RUNNING - following book example
+    processed_network = .back_propogation(initial_network, data, response, epochs, learning_rate)
 
-    sizes = c(1,2,1,1)
-
-    data = data.frame(x = rnorm(15), y = runif(15))
-
-    epochs = 1
-
-    learning_rate = .1
-
-    initial_network = .initialize_random_network(sizes)
-
-    initial_network$weights[[1]] = matrix(c(.1, .2, .3, .4), 2, 2, byrow = TRUE)
-
-    initial_network$weights[[2]] = matrix(c(.2, 1, -3))
-
-    initial_network$weights[[3]] = matrix(1:2)
-
-    data_obs = c(2)
-    response = 1
-
-    processed_network = .back_propogation(initial_network, data_obs, epochs, learning_rate)
-
+    processed_network
 }
 
 ################################################################################
@@ -45,6 +27,7 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
     if(!all(as.integer(sizes) == sizes)){
         stop("Argument sizes must be vector of integers")
     }
+    #TODO: Add test for training data being data.frame
 }
 
 .calculate_transformation <- function(z){
@@ -94,20 +77,18 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, epochs = NULL)
     list(output = output, s = s)
 }
 
-.back_propogation <- function(network, data, epochs, learning_rate){
-    # FIX THIS
-    # data_obs = 
-    # response = 
+.back_propogation <- function(network, data, response, epochs, learning_rate){
     for(epoch_number in 1:epochs){
-        print(paste("Epoch: ", epoch_number))
-
-        activations = .feed_forward(network, as.matrix(data_obs))
-
-        deltas = .compute_deltas(network, activations, response)
-
-        partial_derivatives = .calculate_partial_derivatives(activations, deltas, data_obs)
-
-        network = .update_network(network, partial_derivatives, learning_rate)
+        print(paste("Epoch: ", epoch_number, "running..."))
+        for(row_number in 1:nrow(data)){
+            data_observation = as.matrix(data[row_number,])
+            response_observation = response[row_number]
+            activations = .feed_forward(network, data_observation)
+            deltas = .compute_deltas(network, activations, response)
+            partial_derivatives = .calculate_partial_derivatives(activations, deltas, data_observation)
+            network = .update_network(network, partial_derivatives, learning_rate)
+        }
+        print(paste("Epoch: ", epoch_number, "complete!"))
     }
     network
 }
