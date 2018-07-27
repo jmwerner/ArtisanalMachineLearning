@@ -3,9 +3,30 @@ context("neural network input testing")
 ################################################################################
 
 test_that("Erroneous neural network input returns error", {
-    expect_error(aml_neural_network(1, 1))
-    expect_error(aml_neural_network(c("hello", "there"), 1))
-    expect_error(aml_neural_network(c(1.5, 2.6, 2.1), 1))
+    expect_error(aml_neural_network(1, 1), "Argument sizes must have more than 1 layer. Did you forget to include the input or output layers?")
+    expect_error(aml_neural_network(c("hello", "there"), 1), "Argument sizes must be numeric vector of integers")
+    expect_error(aml_neural_network(c(1.5, 2.6, 2.1), 1), "Argument sizes must be vector of integers")
+
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate="hello"), "Argument learning_rate must be numeric")
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=-10), "Argument learning_rate must be greater than 0")
+    
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = 1L), "Argument data must be a data.frame")
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = data.frame(c("a", "b"), rnorm(2))), "Argument data must have all numeric columns")
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = data.frame(x=rnorm(2), y=letters[1:2])), "Argument data must have all numeric columns")
+
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = data.frame(x=rnorm(2), y=rnorm(2)),
+                                    response=c("a", "b", "c")), "Argument response must be a numeric vector")
+
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = data.frame(x=rnorm(2), y=rnorm(2)),
+                                    response=c(1, 2), epochs = -5), "Argument epochs must be a postive integer")
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = data.frame(x=rnorm(2), y=rnorm(2)),
+                                    response=c(1, 2), epochs = 5.5), "Argument epochs must be a postive integer")
+
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = data.frame(x=rnorm(2), y=rnorm(2)),
+                                    response=c(1, 2, 3), epochs = 100), "Length mismatch: response vector must be equal to number of training data rows")
+    expect_error(aml_neural_network(sizes=c(1, 2), learning_rate=1, data = data.frame(x=rnorm(3), y=rnorm(3), z=rnorm(3)),
+                                    response=c(1, 2), epochs = 100), "Length mismatch: response vector must be equal to number of training data rows")
+
 })
 
 ################################################################################
