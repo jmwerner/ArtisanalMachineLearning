@@ -7,7 +7,7 @@
 #' data
 #' @export
 aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NULL, epochs = NULL){
-    .test_neural_network_input(sizes)
+    .test_neural_network_input(sizes, learning_rate, data, response, epochs)
 
     processed_network = .back_propogation(initial_network, data, response, epochs, learning_rate)
 
@@ -16,7 +16,7 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NUL
 
 ################################################################################
 
-.test_neural_network_input <- function(sizes){
+.test_neural_network_input <- function(sizes, learning_rate, data, response, epochs){
     if(length(sizes) < 2){
         stop(paste("Argument sizes must have more than 1 layer. Did you forget",
                    "to include the input or output layers?"))
@@ -27,7 +27,27 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NUL
     if(!all(as.integer(sizes) == sizes)){
         stop("Argument sizes must be vector of integers")
     }
-    #TODO: Add test for training data being data.frame
+    if(!is.numeric(learning_rate)){
+        stop("Argument learning_rate must be numeric")
+    }
+    if(learning_rate <= 0){
+        stop("Argument learning_rate must be greater than 0")
+    }
+    if(!is.data.frame(data)){
+        stop("Argument data must be a data.frame")
+    }
+    if(!all(sapply(data, is.numeric))){
+        stop("Argument data must have all numeric columns")
+    }
+    if(!is.numeric(response)){
+        stop("Argument response must be a numeric vector")
+    }
+    if(!(as.integer(epochs) == epochs) | (epochs <= 0)){
+        stop("Argument epochs must be a postive integer")
+    }
+    if(!(length(response) == nrow(data))){
+        stop("Length mismatch: response vector must be equal to number of training data rows")
+    }
 }
 
 .calculate_transformation <- function(z){
