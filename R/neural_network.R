@@ -1,9 +1,16 @@
-# PUT ROXYGEN HERE
-#' @param sizes Vector of integer values corresponding to layer sizes 
-#' @param training_data Input data.frame for training network, 
+#' AML neural network
+#'
+#' Trains a simple back-propagation neural network.
+#'
+#' @param sizes Vector of layer sizes
+#' @param learning_rate Learning rate for gradient descent
+#' @param data Input data.frame for training network, 
 #' dimension nxp where p is sizes[1]
 #' @param response Response vector of size nx1 corresponding to the training
 #' data
+#' @param epochs Number of epochs to use in network training
+#' @param verbose Logical option for status printing
+#' @return Trained neural network object of class aml_neural_network
 #' @export
 aml_neural_network <- function(sizes, learning_rate, data, response, epochs, verbose=FALSE){
     .test_neural_network_input(sizes, learning_rate, data, response, epochs, verbose)
@@ -13,6 +20,23 @@ aml_neural_network <- function(sizes, learning_rate, data, response, epochs, ver
     processed_network = .back_propogation(initial_network, data, response, epochs, learning_rate, verbose)
 
     processed_network
+}
+
+#' AML neural network predict method
+#'
+#' Returns predictions for a neural network when given a data set.
+#'
+#' @param network Results network object returned by aml_neural_network function 
+#' @param data Data of correct size to be fed into the neural network
+#' @return Vector of predictions corresponding to the data rows
+#' @export
+predict.aml_neural_network <- function(network, data){
+    prediction_vector = sapply(1:nrow(data), function(i){
+        data_observation = as.matrix(data[i,])
+        forward = .feed_forward(network, data_observation)
+        forward[[length(forward)]]$output
+    })
+    prediction_vector
 }
 
 ################################################################################
@@ -161,13 +185,4 @@ aml_neural_network <- function(sizes, learning_rate, data, response, epochs, ver
         }
     }
     partial_derivatives
-}
-
-.calculate_prediction <- function(network, data){
-    prediction_vector = sapply(1:nrow(data), function(i){
-        data_observation = as.matrix(data[i,])
-        forward = .feed_forward(network, data_observation)
-        forward[[length(forward)]]$output
-    })
-    prediction_vector
 }
