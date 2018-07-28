@@ -5,7 +5,7 @@
 #' @param response Response vector of size nx1 corresponding to the training
 #' data
 #' @export
-aml_neural_network <- function(sizes, learning_rate, data=NULL, response=NULL, epochs=NULL, verbose=FALSE){
+aml_neural_network <- function(sizes, learning_rate, data, response, epochs, verbose=FALSE){
     .test_neural_network_input(sizes, learning_rate, data, response, epochs, verbose)
 
     initial_network = .initialize_random_network(sizes)
@@ -49,9 +49,15 @@ aml_neural_network <- function(sizes, learning_rate, data=NULL, response=NULL, e
     if(!(length(response) == nrow(data))){
         stop("Length mismatch: response vector must be equal to number of training data rows")
     }
-    #TODO: Add test for first (data) layer being equal to columns in data
-    #TODO: Add test for output layer having dim 1 (multi-dimensional output not supported)
-    #TODO: verbose arg testing
+    if(sizes[1] != ncol(data)){
+        stop("First layer must be equal to the number of data columns")
+    }
+    if(sizes[length(sizes)] != 1){
+        stop("Output layer must be equal to 1, multi-dimensional output currently not supported")
+    }
+    if(!is.logical(verbose)){
+        stop("Argument verbose must be TRUE or FALSE")
+    }
 }
 
 .calculate_transformation <- function(z){
