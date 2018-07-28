@@ -1,4 +1,3 @@
-
 # PUT ROXYGEN HERE
 #' @param sizes Vector of integer values corresponding to layer sizes 
 #' @param training_data Input data.frame for training network, 
@@ -6,17 +5,19 @@
 #' @param response Response vector of size nx1 corresponding to the training
 #' data
 #' @export
-aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NULL, epochs = NULL){
-    .test_neural_network_input(sizes, learning_rate, data, response, epochs)
+aml_neural_network <- function(sizes, learning_rate, data=NULL, response=NULL, epochs=NULL, verbose=FALSE){
+    .test_neural_network_input(sizes, learning_rate, data, response, epochs, verbose)
 
-    processed_network = .back_propogation(initial_network, data, response, epochs, learning_rate)
+    initial_network = .initialize_random_network(sizes)
+
+    processed_network = .back_propogation(initial_network, data, response, epochs, learning_rate, verbose)
 
     processed_network
 }
 
 ################################################################################
 
-.test_neural_network_input <- function(sizes, learning_rate, data, response, epochs){
+.test_neural_network_input <- function(sizes, learning_rate, data, response, epochs, verbose){
     if(length(sizes) < 2){
         stop(paste("Argument sizes must have more than 1 layer. Did you forget",
                    "to include the input or output layers?"))
@@ -48,6 +49,9 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NUL
     if(!(length(response) == nrow(data))){
         stop("Length mismatch: response vector must be equal to number of training data rows")
     }
+    #TODO: Add test for first (data) layer being equal to columns in data
+    #TODO: Add test for output layer having dim 1 (multi-dimensional output not supported)
+    #TODO: verbose arg testing
 }
 
 .calculate_transformation <- function(z){
@@ -60,12 +64,14 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NUL
 
 .initialize_random_network <- function(sizes){
     layers = length(sizes)
+    # Calculated from a heuristic 
+    random_sd = .5
     weights = lapply(2:layers, function(index){
         # Add one for bias term
         number_of_nodes_in_previous_layer = sizes[index - 1] + 1
         number_of_nodes_in_current_layer = sizes[index]
         weight_list = lapply(1:number_of_nodes_in_previous_layer, function(x){
-            rnorm(number_of_nodes_in_current_layer)
+            rnorm(number_of_nodes_in_current_layer, mean=0, sd=random_sd)
         })
         do.call(rbind, weight_list)
     })
@@ -97,25 +103,30 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NUL
     list(output = output, s = s)
 }
 
-.back_propogation <- function(network, data, response, epochs, learning_rate){
+.back_propogation <- function(network, data, response, epochs, learning_rate, verbose=FALSE){
     for(epoch_number in 1:epochs){
-        print(paste("Epoch: ", epoch_number, "running..."))
+        if(verbose){
+            print(paste(date(), "|", "Epoch:", epoch_number, "starting..."))
+        }
+        # This should be parallelized in batches, but it is not.
         for(row_number in 1:nrow(data)){
             data_observation = as.matrix(data[row_number,])
             response_observation = response[row_number]
             activations = .feed_forward(network, data_observation)
-            deltas = .compute_deltas(network, activations, response)
+            deltas = .compute_deltas(network, activations, response_observation)
             partial_derivatives = .calculate_partial_derivatives(activations, deltas, data_observation)
             network = .update_network(network, partial_derivatives, learning_rate)
         }
-        print(paste("Epoch: ", epoch_number, "complete!"))
+        if(verbose){
+            print(paste(date(), "|", "Epoch:", epoch_number, "complete!"))
+        }
     }
     network
 }
 
 .update_network <- function(network, partial_derivatives, learning_rate){
     for(i in 1:length(network$weights)){
-        network$weights[[i]] = network$weights[[i]] + learning_rate * partial_derivatives[[i]]
+        network$weights[[i]] = network$weights[[i]] - learning_rate * partial_derivatives[[i]]
     }
     network
 }
@@ -144,4 +155,13 @@ aml_neural_network <- function(sizes, learning_rate, data = NULL, response = NUL
         }
     }
     partial_derivatives
+}
+
+.calculate_prediction <- function(network, data){
+    prediction_vector = sapply(1:nrow(data), function(i){
+        data_observation = as.matrix(data[i,])
+        forward = .feed_forward(network, data_observation)
+        forward[[length(forward)]]$output
+    })
+    prediction_vector
 }
