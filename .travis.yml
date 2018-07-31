@@ -3,6 +3,9 @@ sudo: false
 warnings_are_errors: false
 cache: packages
 
+r_build_args: --no-build-vignettes --no-manual --no-resave-data
+r_check_args: --no-build-vignettes --no-manual
+
 before_deploy:
   - R -e "install.packages('roxygen2', repos = 'http://cran.rstudio.com')"
 
