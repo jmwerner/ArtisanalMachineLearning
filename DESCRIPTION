@@ -14,7 +14,11 @@ Depends:
 Suggests:
     testthat (>= 1.0.2),
     knitr,
-    rmarkdown
+    rmarkdown,
+    rprojroot,
+    readr,
+    dplyr,
+    tidyr
 License: MIT
 Encoding: UTF-8
 LazyData: true

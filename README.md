@@ -11,9 +11,9 @@ As an exercise of professional development (but mostly for funzies) I will be wr
 ### Implemented Algorithms
 
 * [k-Means](http://jmwerner.github.io/ArtisanalMachineLearning/inst/doc/k-means.html)
+* [Simple Neural Network](http://jmwerner.github.io/ArtisanalMachineLearning/inst/doc/neural-network.html)
 
 ### In Progress / On Deck
 
 * Random Forest
 * GBM
-* Neural networks/Deep learning
