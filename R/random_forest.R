@@ -2,18 +2,32 @@
 #'
 #' Calculates predictions via random forest algorithm
 #'
-#' @return Results object of class aml_random_forest
+#' @param data Input data.frame of dimension n x p for training the random forest
+#' @param response Response vector of size nx1 corresponding to the training
+#' data
+#' @param b Number of bootstrap iterations to perform (trees to build)
+#' @param m Number of columns to randomly use at each splitting iteration
+#' @param evaluation_criterion Function that calculates error criterion for
+#' fitting, defaults to sum of squares
+#' @param min_obs Minimum observations allowed to end up in a single node,
+#' defaults to 5
+#' @param max_depth Maximum number of successive splits allowed to happen
+#' in the tree, defaults to 8
+#' @return Results trained list of class aml_random_forest filled with random forest trees
 #' @export
-aml_random_forest = function(){
-    5
-    # input checking - check there are enough rows to meet min obs requirements
+aml_random_forest <- function(data, response, b, m, evaluation_criterion = sum_of_squares, min_obs = 5, max_depth = 8){    
+    bootstrap_trees = lapply(1:b, function(i){
+        bootstrapped_data = .create_single_bootstrapped_data_frame(data)
+        sampled_columns = sample(names(data), m)
+        create_tree(bootstrapped_data[,sampled_columns], response, evaluation_criterion, min_obs, max_depth)
+    })
 }
 
 #' AML CART
 #'
 #' Produces a single decision tree.
 #'
-#' @param data Input data.frame for training decision tree of dimension n x p
+#' @param data Input data.frame dimension n x p for training decision tree
 #' @param response Response vector of size nx1 corresponding to the training
 #' data
 #' @param evaluation_criterion Function that calculates error criterion for
@@ -21,7 +35,7 @@ aml_random_forest = function(){
 #' @param min_obs Minimum observations allowed to end up in a single node,
 #' defaults to 5
 #' @param max_depth Maximum number of successive splits allowed to happen
-#' in the tree
+#' in the tree, defaults to 8
 #' @return Single decision tree in list format of class aml_tree
 #' @export
 create_tree = function(data, response, evaluation_criterion = sum_of_squares, min_obs = 5, max_depth = 8){
@@ -66,6 +80,11 @@ predict.aml_tree <- function(tree, data){
 
 sum_of_squares <- function(response_vector, prediction){
     sum((response_vector - prediction)^2)
+}
+
+.create_single_bootstrapped_data_frame <- function(data){
+    row_indicators = sample(1:nrow(data), nrow(data), replace = TRUE)
+    return(data[row_indicators,])
 }
 
 .find_one_column_split <- function(data, split_column_name, response, evaluation_criterion){

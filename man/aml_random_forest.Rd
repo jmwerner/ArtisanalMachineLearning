@@ -4,10 +4,30 @@
 \alias{aml_random_forest}
 \title{AML Random Forest}
 \usage{
-aml_random_forest()
+aml_random_forest(data, response, b, m, evaluation_criterion = sum_of_squares,
+  min_obs = 5, max_depth = 8)
+}
+\arguments{
+\item{data}{Input data.frame of dimension n x p for training the random forest}
+
+\item{response}{Response vector of size nx1 corresponding to the training
+data}
+
+\item{b}{Number of bootstrap iterations to perform (trees to build)}
+
+\item{m}{Number of columns to randomly use at each splitting iteration}
+
+\item{evaluation_criterion}{Function that calculates error criterion for
+fitting, defaults to sum of squares}
+
+\item{min_obs}{Minimum observations allowed to end up in a single node,
+defaults to 5}
+
+\item{max_depth}{Maximum number of successive splits allowed to happen
+in the tree, defaults to 8}
 }
 \value{
-Results object of class aml_random_forest
+Results trained list of class aml_random_forest filled with random forest trees
 }
 \description{
 Calculates predictions via random forest algorithm

@@ -8,7 +8,7 @@ create_tree(data, response, evaluation_criterion = sum_of_squares,
   min_obs = 5, max_depth = 8)
 }
 \arguments{
-\item{data}{Input data.frame for training decision tree of dimension n x p}
+\item{data}{Input data.frame dimension n x p for training decision tree}
 
 \item{response}{Response vector of size nx1 corresponding to the training
 data}
@@ -20,7 +20,7 @@ fitting, defaults to sum of squares}
 defaults to 5}
 
 \item{max_depth}{Maximum number of successive splits allowed to happen
-in the tree}
+in the tree, defaults to 8}
 }
 \value{
 Single decision tree in list format of class aml_tree
