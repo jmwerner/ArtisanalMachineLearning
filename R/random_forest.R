@@ -36,11 +36,39 @@ create_tree = function(data, response, evaluation_criterion = sum_of_squares, mi
     tree = .prepend_class(tree, "aml_tree")
 }
 
-sum_of_squares = function(response_vector, prediction){
+#' AML single tree predict method
+#'
+#' Returns prediction for a single tree when given a row of data.
+#'
+#' @param tree Single fitted tree returned by the `create_tree` function
+#' @param data Data.frame of size `1 x p` for prediction
+#' @return Prediction value
+#' @export
+predict.aml_tree <- function(tree, data){
+    if(!is.data.frame(data)){
+        stop("ERROR: data must be a data.frame")
+    }
+    if(nrow(data) != 1){
+        stop("ERROR: data must be a data.frame of dimension 1 x p")
+    }
+    while(!"prediction" %in% names(tree)){
+        if(!tree$split_column %in% names(data)){
+            stop("ERROR: Split column not provided in prediction data row")
+        }
+        if(data[[tree$split_column]] < tree$split_value){
+            tree = tree$left
+        }else{
+            tree = tree$right
+        }
+    }
+    return(tree$prediction)
+}
+
+sum_of_squares <- function(response_vector, prediction){
     sum((response_vector - prediction)^2)
 }
 
-.find_one_column_split = function(data, split_column_name, response, evaluation_criterion){
+.find_one_column_split <- function(data, split_column_name, response, evaluation_criterion){
     # Get the midpoints between each unique value
     split_values = sort(unique(data[[split_column_name]]))
     distance_to_midpoint = diff(split_values) / 2
@@ -60,7 +88,7 @@ sum_of_squares = function(response_vector, prediction){
                stringsAsFactors = FALSE)
 }
 
-.find_one_split = function(data, response, evaluation_criterion){
+.find_one_split <- function(data, response, evaluation_criterion){
     all_splits = lapply(names(data), function(split_column_name){
         .find_one_column_split(data, split_column_name, response, evaluation_criterion)
     }) 
@@ -69,7 +97,7 @@ sum_of_squares = function(response_vector, prediction){
     all_splits[which.min(all_splits$criterion_value),]    
 }
 
-.build_tree = function(data, response, split, max_depth, evaluation_criterion, min_obs, count = 1){
+.build_tree <- function(data, response, split, max_depth, evaluation_criterion, min_obs, count = 1){
     indicators = data[[split$split_column_name]] < split$split_value
     if(count == max_depth | (sum(indicators) <= min_obs) | (sum(!indicators) <= min_obs)){
         return(data.frame(split,
@@ -98,3 +126,4 @@ sum_of_squares = function(response_vector, prediction){
                                         count = count + 1)))
     }
 }
+
