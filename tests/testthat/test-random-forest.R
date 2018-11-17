@@ -48,6 +48,18 @@ test_that("Single column split is calculated correctly", {
     expect_equal(dim(one_split), c(1, 3))
 })
 
+test_that("Single column split is calculated correctly when column has no variation", {
+    dummy_data = data.frame(a = rep(3.4, length(response)))
+    one_split = .find_one_column_split(dummy_data, "a", response, sum_of_squares)
+    expect_equal(one_split$split_column_name, "a")
+    expect_equal(one_split$criterion_value, NA)
+    expect_equal(one_split$split_value, 3.4)
+    expect_type(one_split$split_column_name, "character")
+    expect_type(one_split$criterion_value, "logical")
+    expect_type(one_split$split_value, "double")
+    expect_equal(dim(one_split), c(1, 3))
+})
+
 test_that("Single tree training is correct", {
     one_tree = create_tree(data, response, evaluation_criterion = sum_of_squares, min_obs = 5, max_depth = 8)
     # dput(one_tree)
