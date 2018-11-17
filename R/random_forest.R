@@ -89,7 +89,7 @@ sum_of_squares <- function(response_vector, prediction){
 
 .find_one_column_split <- function(data, split_column_name, response, evaluation_criterion){
     # Exit if all column values are equal
-    if(all(diff(data[['a']]) == 0)){
+    if(all(diff(data[[split_column_name]]) == 0)){
         output_frame = data.frame("split_column_name" = split_column_name,
                                   "criterion_value" = NA,
                                   "split_value" = data[[split_column_name]][1],
