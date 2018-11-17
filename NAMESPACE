@@ -2,6 +2,7 @@
 
 S3method(plot,aml_k_means)
 S3method(predict,aml_neural_network)
+S3method(predict,aml_random_forest)
 S3method(predict,aml_tree)
 export(aml_k_means)
 export(aml_neural_network)

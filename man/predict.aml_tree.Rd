@@ -9,7 +9,7 @@
 \arguments{
 \item{tree}{Single fitted tree returned by the `create_tree` function}
 
-\item{data}{Data.frame of size `1 x p` for prediction}
+\item{data}{Data.frame row of size `1 x p` for prediction}
 }
 \value{
 Prediction value
