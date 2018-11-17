@@ -21,6 +21,7 @@ aml_random_forest <- function(data, response, b, m, evaluation_criterion = sum_o
         sampled_columns = sample(names(data), m)
         create_tree(bootstrapped_data[,sampled_columns], response, evaluation_criterion, min_obs, max_depth)
     })
+    forest = .prepend_class(bootstrap_trees, "aml_random_forest")
 }
 
 #' AML CART
@@ -55,7 +56,7 @@ create_tree = function(data, response, evaluation_criterion = sum_of_squares, mi
 #' Returns prediction for a single tree when given a row of data.
 #'
 #' @param tree Single fitted tree returned by the `create_tree` function
-#' @param data Data.frame of size `1 x p` for prediction
+#' @param data Data.frame row of size `1 x p` for prediction
 #' @return Prediction value
 #' @export
 predict.aml_tree <- function(tree, data){
@@ -75,7 +76,26 @@ predict.aml_tree <- function(tree, data){
             tree = tree$right
         }
     }
-    return(tree$prediction)
+    tree$prediction
+}
+
+#' AML random forest predict method
+#'
+#' Returns prediction for a randomm forest when given a row of data.
+#'
+#' @param forest Forest of trees trained by `aml_random_forest`
+#' @param data Data.frame row of size `1 x p` for prediction
+#' @return Prediction value
+#' @export
+predict.aml_random_forest <- function(forest, data){
+    if(!is.data.frame(data)){
+        stop("ERROR: data must be a data.frame")
+    }
+    if(nrow(data) != 1){
+        stop("ERROR: data must be a data.frame of dimension 1 x p")
+    }
+    predictions = lapply(forest, predict, data = data)
+    mean(unlist(predictions))
 }
 
 sum_of_squares <- function(response_vector, prediction){
