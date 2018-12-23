@@ -1,6 +1,6 @@
 #' AML Random Forest
 #'
-#' Calculates predictions via random forest algorithm
+#' Trains an ensemble of trees via random forest
 #'
 #' @param data Input data.frame of dimension n x p for training the random forest
 #' @param response Response vector of size nx1 corresponding to the training
@@ -23,6 +23,53 @@ aml_random_forest <- function(data, response, b, m, evaluation_criterion = sum_o
     })
     forest = .prepend_class(bootstrap_trees, "aml_random_forest")
 }
+
+#' AML Gradient Boosted Machine (GBM)
+#'
+#' Trains an ensemble of trees via gradient boosting
+#'
+#' @param data Input data.frame of dimension n x p for training the GBM
+#' @param response Response vector of size nx1 corresponding to the training
+#' data
+#' @param learning_rate Shrinkage factor used to dictate learning speed, 
+#' defaults to .1
+#' @param n_trees Number of trees to train, defaults to 1000
+#' @param m Number of columns to randomly use at each splitting iteration, 
+#' defaults to all columns
+#' @param evaluation_criterion Function that calculates error criterion for
+#' fitting, defaults to sum of squares
+#' @param min_obs Minimum observations allowed to end up in a single node,
+#' defaults to 5
+#' @param max_depth Maximum number of successive splits allowed to happen
+#' in the tree, defaults to 8
+#' @return Results trained list of class aml_random_forest filled with random forest trees
+#' @export
+aml_gbm <- function(data, response, learning_rate = .1, n_trees = 10, m = NULL, evaluation_criterion = sum_of_squares, min_obs = 5, max_depth = 8){    
+    if(is.null(m)){
+        m = ncol(data)
+    }
+
+    ensemble = list()
+    current_response = response
+    current_target = response
+    for(tree_number in 1:n_trees){
+        sampled_columns = sample(names(data), m)
+        tree = create_tree(data=data[,sampled_columns], response=current_target, evaluation_criterion=evaluation_criterion, min_obs=min_obs, max_depth=max_depth)
+        tree_predictions = sapply(1:nrow(data), function(i){predict(tree, data[i,])})
+        tree_residuals = current_response - tree_predictions
+
+        ensemble[[tree_number]] = list(tree, tree_predictions, tree_residuals)
+
+        current_response = current_response + tree_predictions
+        current_target = tree_residuals
+    }
+
+    ensemble[["learning_rate"]] = learning_rate
+    ensemble = .prepend_class(ensemble, "aml_gbm")
+
+    return(ensemble)
+}
+
 
 #' AML CART
 #'
@@ -147,7 +194,7 @@ sum_of_squares <- function(response_vector, prediction){
 
 .build_tree <- function(data, response, split, max_depth, evaluation_criterion, min_obs, count = 1){
     indicators = data[[split$split_column_name]] < split$split_value
-    if(count == max_depth | (sum(indicators) <= min_obs) | (sum(!indicators) <= min_obs)){
+    if(count == max_depth | (sum(indicators) <= min_obs) | (sum(!indicators) <= min_obs) | all(lapply(data[indicators,], var) == 0) | all(lapply(data[!indicators,], var) == 0)){
         return(data.frame(split,
                           prediction = mean(response), 
                           count = length(response),

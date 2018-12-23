@@ -309,3 +309,12 @@ test_that("random forest prediction works correctly", {
     expect_equal(predict(forest, data.frame(a=1, b=1, c=10)), mean(c(0.8947368, 0.9857143)), tolerance = .00001)
     expect_equal(predict(forest, data.frame(a=1, b=10, c=10)), mean(c(0.8947368, 1.264348)), tolerance = .00001)
 })
+
+
+# context("gbm testing")
+
+# data = boot::amis
+# response = data$speed
+# data = data[,-1]
+
+# gbm = aml_gbm(data, response)
