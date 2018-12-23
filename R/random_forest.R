@@ -58,16 +58,15 @@ aml_gbm <- function(data, response, learning_rate = .1, n_trees = 10, m = NULL, 
         tree_predictions = sapply(1:nrow(data), function(i){predict(tree, data[i,])})
         tree_residuals = current_response - tree_predictions
 
-        ensemble[[tree_number]] = list(tree, tree_predictions, tree_residuals)
+        ensemble[[tree_number]] = list(tree=tree, tree_predictions=tree_predictions, tree_residuals=tree_residuals)
 
-        current_response = current_response + tree_predictions
+        current_response = current_response + learning_rate * tree_predictions
         current_target = tree_residuals
     }
 
     ensemble[["learning_rate"]] = learning_rate
+    ensemble[["n_trees"]] = n_trees
     ensemble = .prepend_class(ensemble, "aml_gbm")
-
-    return(ensemble)
 }
 
 
@@ -145,13 +144,38 @@ predict.aml_random_forest <- function(forest, data){
     mean(unlist(predictions))
 }
 
+#' AML GBM predict method
+#'
+#' Returns prediction for a GBM when given a row of data.
+#'
+#' @param gbm Ensemble of trees trained by `aml_gbm`
+#' @param data Data.frame row of size `1 x p` for prediction
+#' @return Prediction value
+#' @export
+predict.aml_gbm <- function(gbm, data){
+    if(!is.data.frame(data)){
+        stop("ERROR: data must be a data.frame")
+    }
+    if(nrow(data) != 1){
+        stop("ERROR: data must be a data.frame of dimension 1 x p")
+    }
+
+    prediction = predict(gbm[[1]]$tree, data)
+
+    for(i in 2:gbm[["n_trees"]]){
+        prediction = prediction + gbm[["learning_rate"]] * predict(gbm[[i]]$tree, data)
+    }
+
+    prediction
+}
+
 sum_of_squares <- function(response_vector, prediction){
     sum((response_vector - prediction)^2)
 }
 
 .create_single_bootstrapped_data_frame <- function(data){
     row_indicators = sample(1:nrow(data), nrow(data), replace = TRUE)
-    return(data[row_indicators,])
+    data[row_indicators,]
 }
 
 .find_one_column_split <- function(data, split_column_name, response, evaluation_criterion){

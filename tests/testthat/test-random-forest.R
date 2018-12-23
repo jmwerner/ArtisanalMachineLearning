@@ -311,10 +311,10 @@ test_that("random forest prediction works correctly", {
 })
 
 
-# context("gbm testing")
+context("gbm testing")
 
-# data = boot::amis
-# response = data$speed
-# data = data[,-1]
+data = boot::amis
+response = data$speed
+data = data[,-1]
 
-# gbm = aml_gbm(data, response)
+gbm = aml_gbm(data, response)
