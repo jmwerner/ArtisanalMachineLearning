@@ -7,8 +7,6 @@ names(data) = letters[1:4]
 response = data$d
 data$d = NULL
 
-root_directory = system('git rev-parse --show-toplevel', intern=TRUE)
-
 test_that("Single split is calculated correctly", {
     one_split = .find_one_split(data, response, sum_of_squares)
 
@@ -326,9 +324,13 @@ context("gbm testing")
 # data$rings = NULL
 # abalone_data = list(data=data, response=response)
 # saveRDS(abalone_data, 'abalone_data.RDS')
-abalone_data = readRDS(file.path(root_directory, "data", "abalone_data.RDS"))
+abalone_data_file = system.file("external_data", "abalone_data.RDS", package="ArtisanalMachineLearning", mustWork=TRUE)
+abalone_data = readRDS(abalone_data_file)
 gbm = aml_gbm(abalone_data$data, abalone_data$response, learning_rate = .25, n_trees = 3, evaluation_criterion = sum_of_squares, min_obs = 10, max_depth = 4, verbose = FALSE)
 gbm_predictions = predict_all(gbm, abalone_data$data, n_trees = 3)
+
+
+
 
 test_that('small gbm is trained correctly', {
     expected_gbm = structure(list(structure(list(tree = structure(list(split_column = "weight.sh", 
