@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jeremy Werner" />
 
-<meta name="date" content="2018-07-30" />
+<meta name="date" content="2019-03-24" />
 
 <title>Neural Network Vignette</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Neural Network Vignette</h1>
 <h4 class="author"><em>Jeremy Werner</em></h4>
-<h4 class="date"><em>2018-07-30</em></h4>
+<h4 class="date"><em>2019-03-24</em></h4>
 
 
 
@@ -116,8 +116,19 @@ validation_accuracy =<span class="st"> </span><span class="kw">sum</span>((valid
 <h1>Example 2: MNIST</h1>
 <p>Let’s read in the MNIST handwritten digits data and define a few helper functions. Code was largely robbed from <a href="https://www.r-bloggers.com/exploring-handwritten-digit-classification-a-tidy-analysis-of-the-mnist-dataset/">here</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(readr)
-<span class="kw">library</span>(dplyr)
-<span class="kw">library</span>(tidyr)
+<span class="kw">library</span>(dplyr)</code></pre></div>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following object is masked from 'package:testthat':
+## 
+##     matches</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyr)
 <span class="kw">library</span>(ggplot2)
 <span class="kw">library</span>(viridis)
 

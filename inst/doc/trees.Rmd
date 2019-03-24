@@ -1,0 +1,83 @@
+---
+title: "Random Forest and GBM Vignette"
+author: "Jeremy Werner"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Tree-based models are amazing. Here's a very simple vignette demonstrating how to use Artisanal Machine Learning's Random Forest and GBM models.
+
+# Example: Abalone Data
+
+```{r echo=FALSE}
+library(ggplot2)
+abalone_data_file = system.file("external_data", "abalone_data.RDS", package="ArtisanalMachineLearning", mustWork=TRUE)
+abalone_data = readRDS(abalone_data_file)
+```
+
+```{r}
+library(ArtisanalMachineLearning)
+```
+
+This example will be using the 'Abalone' dataset that I robbed from the internet.
+
+```{r}
+dim(abalone_data$data)
+summary(abalone_data$data)
+```
+
+The data set has many numeric columns and a numeric response that takes integer values from 1-29
+
+```{r, echo=FALSE}
+ggplot(data=data.frame(response=abalone_data$response), aes(response)) + 
+    geom_histogram(breaks=seq(0, 30, by = 1), 
+                   col="grey", 
+                   fill="blue") + 
+    labs(x="", y="Count", title="Histogram of Response") + 
+    theme_bw()
+```
+
+
+#root_directory = system('git rev-parse --show-toplevel', intern=TRUE)
+#abalone_data = readRDS(file.path(root_directory, "data", "abalone_data.RDS"))
+
+#gbm = aml_gbm(abalone_data$data, abalone_data$response, learning_rate = .25, n_trees = 3, evaluation_criterion = sum_of_squares, min_obs = 10, max_depth = 4, verbose = FALSE)
+
+#gbm_predictions = predict_all(gbm, abalone_data$data, n_trees = 3)
+
+
+# Vignette structure 
+# load data, print data summary
+
+# Fit basic rf
+
+# Fit basic gbm
+
+
+
+
+
+#gbm = aml_gbm(data, response, learning_rate = .25, n_trees = 50, evaluation_criterion = sum_of_squares, min_obs = 10, max_depth = 4, verbose = TRUE)
+
+
+
+#all_errors_gbm = sapply(c(10, 25, 40, 50), function(x){
+#    print(paste("Tree number", x))
+#    predictions = predict_all(gbm, data, n_trees = x)
+#    sum((response - predictions)^2) / length(predictions)
+#})
+
+
+#random_forest = aml_random_forest(data, response, b = 50, m = 6, evaluation_criterion = sum_of_squares, min_obs = 10, max_depth = 4, verbose = TRUE)
+
+#all_errors = sapply(5:15, function(x){
+#    print(paste("Tree number", x))
+#    predictions = predict_all(random_forest, data, n_trees = x)
+#    sum((response - predictions)^2) / length(predictions)
+#})
+
+
