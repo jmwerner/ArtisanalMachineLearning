@@ -324,7 +324,7 @@ context("gbm testing")
 # data$rings = NULL
 # abalone_data = list(data=data, response=response)
 # saveRDS(abalone_data, 'abalone_data.RDS')
-abalone_data_file = system.file("external_data", "abalone_data.RDS", package = "ArtisanalMachineLearning")
+abalone_data_file = system.file("external_data", "abalone_data.RDS", package="ArtisanalMachineLearning", mustWork=TRUE)
 abalone_data = readRDS(abalone_data_file)
 gbm = aml_gbm(abalone_data$data, abalone_data$response, learning_rate = .25, n_trees = 3, evaluation_criterion = sum_of_squares, min_obs = 10, max_depth = 4, verbose = FALSE)
 gbm_predictions = predict_all(gbm, abalone_data$data, n_trees = 3)
