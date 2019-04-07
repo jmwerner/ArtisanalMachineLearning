@@ -46,7 +46,7 @@ ggplot(data=data.frame(response=abalone_data$response), aes(response)) +
 # Random Forest Model
 
 ```{r, eval=FALSE}
-random_forest = aml_random_forest(data=abalone_data$data, response=abalone_data$response, b=200, m=8, evaluation_criterion=sum_of_squares, min_obs=5, max_depth=16, verbose=FALSE)
+random_forest = aml_random_forest(data=abalone_data$data, response=abalone_data$response, b=200, m=6, evaluation_criterion=sum_of_squares, min_obs=5, max_depth=16, verbose=FALSE)
 ```
 
 ```{r echo = FALSE}
@@ -54,8 +54,7 @@ random_forest = aml_random_forest(data=abalone_data$data, response=abalone_data$
 random_forest = readRDS(file.path(find_root('DESCRIPTION'), 'data/random_forest.RDS'))
 ```
 
-
-Now that we have a (small-ish) random forest model, let's simply verify that it's fitting a better-than-garbage model on the training data. The parameters are intentionally set to encourage a bit of overfitting.
+Now that we have a random forest model, let's simply verify that it's fitting a better-than-garbage model on the training data. The parameters are intentionally set to encourage a bit of overfitting.
 
 ```{r}
 random_forest_predictions = predict_all(random_forest, abalone_data$data, n_trees=200)
@@ -70,26 +69,32 @@ sum((abalone_data$response - random_forest_predictions)^2) / length(abalone_data
 ## Comparison of predicted and actual
 
 ```{r, echo=FALSE, fig.width=7, fig.height=5}
-
 plotting_data_rf = data.frame(predicted=random_forest_predictions, 
-                              actual=abalone_data$response, 
-                              Difference=abs(random_forest_predictions - abalone_data$response))
+                               actual=abalone_data$response, 
+                               Difference=abs(random_forest_predictions - abalone_data$response))
 
 ggplot(plotting_data_rf, aes(x=actual, y=predicted, color=Difference)) +
     geom_point() + 
-    scale_y_continuous(limits = c(1, 29)) + 
+    scale_y_continuous(limits = c(-1, 29)) + 
     geom_jitter() + 
     scale_color_viridis() + 
     geom_abline(intercept = 0, slope = 1, color="black", size=1.5) + 
-    labs(x="Actual", y="Predicted", title="Actual vs Predicted")
-
+    labs(x="Actual", y="Predicted", title="Actual vs Predicted") + 
+    theme_bw()
 ```
+
+Not bad! This model is clearly picking up some signal. Let's try out a small GBM now just for kicks.
 
 
 # GBM Model
 
-```{r}
-gbm = aml_gbm(abalone_data$data, abalone_data$response, learning_rate=.25, n_trees=50, evaluation_criterion=sum_of_squares, min_obs=10, max_depth=4, verbose=FALSE)
+```{r, eval=FALSE}
+gbm = aml_gbm(abalone_data$data, abalone_data$response, learning_rate=.1, n_trees=50, evaluation_criterion=sum_of_squares, min_obs=10, max_depth=4, verbose=FALSE)
+```
+
+```{r echo = FALSE}
+# Do a cooking show trick and bring out an already baked rf
+gbm = readRDS(file.path(find_root('DESCRIPTION'), 'data/gbm.RDS'))
 ```
 
 Circa the RF model, let's see if this picks up any signal at all on the training data.
@@ -114,15 +119,17 @@ plotting_data_gbm = data.frame(predicted=gbm_predictions,
 
 ggplot(plotting_data_gbm, aes(x=actual, y=predicted, color=Difference)) +
     geom_point() + 
-    scale_y_continuous(limits = c(1, 29)) + 
+    scale_y_continuous(limits = c(-1, 29)) + 
     geom_jitter() + 
     scale_color_viridis() + 
     geom_abline(intercept = 0, slope = 1, color="black", size=1.5) + 
-    labs(x="Actual", y="Predicted", title="Actual vs Predicted")
-
+    labs(x="Actual", y="Predicted", title="Actual vs Predicted") + 
+    theme_bw()
 ```
 
 
 # Conclusion
 
-The GBM is very much outperforming the RF, as expected. This illustration only includes looking at statistics on the training data set, so we can't make huge conclusions, the author simply wanted to demonstrate these hand-crafted models were producing better-than-trash results.
+The RF model is outperforming the GBM, but the GBM is significantly smaller and the author didn't spend much time tuning the hyperparameters ¯\_(ツ)_/¯ 
+
+Also, this illustration only includes looking at statistics on the training data set, so we definitely can't make huge conclusions. The author simply wanted to demonstrate these hand-crafted models were producing better-than-trash results, and that has been achieved. 
