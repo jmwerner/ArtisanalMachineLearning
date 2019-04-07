@@ -25,9 +25,12 @@ aml_random_forest <- function(data, response, b, m = NULL, evaluation_criterion 
         if(verbose & (i %% 10) == 1){
             print(paste("Iteration", i, "of", b))
         }
-        bootstrapped_data = .create_single_bootstrapped_data_frame(data)
+        bootstrapped_data = .create_bootstrapped_data(data, response)
         sampled_columns = sample(names(data), m)
-        create_tree(bootstrapped_data[,sampled_columns], response, evaluation_criterion, min_obs, max_depth)
+        create_tree(bootstrapped_data$bootstrapped_data[,sampled_columns], 
+                    bootstrapped_data$bootstrapped_response, evaluation_criterion, 
+                    min_obs, 
+                    max_depth)
     })
     bootstrapped_trees[["n_trees"]] = b
     forest = .prepend_class(bootstrapped_trees, "aml_random_forest")
@@ -224,9 +227,9 @@ sum_of_squares <- function(response_vector, prediction){
     sum((response_vector - prediction)^2)
 }
 
-.create_single_bootstrapped_data_frame <- function(data){
+.create_bootstrapped_data <- function(data, response){
     row_indicators = sample(1:nrow(data), nrow(data), replace = TRUE)
-    data[row_indicators,]
+    list(bootstrapped_data=data[row_indicators,], bootstrapped_response=response[row_indicators])
 }
 
 .find_one_column_split <- function(data, split_column_name, response, evaluation_criterion){
