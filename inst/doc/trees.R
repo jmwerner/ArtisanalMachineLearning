@@ -21,7 +21,14 @@ ggplot(data=data.frame(response=abalone_data$response), aes(response)) +
     theme_bw()
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  random_forest = aml_random_forest(data=abalone_data$data, response=abalone_data$response, b=200, m=6, evaluation_criterion=sum_of_squares, min_obs=5, max_depth=16, verbose=FALSE)
+#  random_forest = aml_random_forest(data=abalone_data$data,
+#                                    response=abalone_data$response,
+#                                    b=200,
+#                                    m=6,
+#                                    evaluation_criterion=sum_of_squares,
+#                                    min_obs=5,
+#                                    max_depth=16,
+#                                    verbose=FALSE)
 
 ## ----echo = FALSE--------------------------------------------------------
 # Do a cooking show trick and bring out an already baked rf
@@ -48,10 +55,17 @@ ggplot(plotting_data_rf, aes(x=actual, y=predicted, color=Difference)) +
     theme_bw()
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  gbm = aml_gbm(abalone_data$data, abalone_data$response, learning_rate=.1, n_trees=50, evaluation_criterion=sum_of_squares, min_obs=10, max_depth=4, verbose=FALSE)
+#  gbm = aml_gbm(abalone_data$data,
+#                abalone_data$response,
+#                learning_rate=.1,
+#                n_trees=50,
+#                evaluation_criterion=sum_of_squares,
+#                min_obs=10,
+#                max_depth=4,
+#                verbose=FALSE)
 
 ## ----echo = FALSE--------------------------------------------------------
-# Do a cooking show trick and bring out an already baked rf
+# Do a cooking show trick and bring out an already baked gbm
 gbm = readRDS(file.path(find_root('DESCRIPTION'), 'data/gbm.RDS'))
 
 ## ------------------------------------------------------------------------

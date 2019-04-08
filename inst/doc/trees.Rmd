@@ -46,7 +46,14 @@ ggplot(data=data.frame(response=abalone_data$response), aes(response)) +
 # Random Forest Model
 
 ```{r, eval=FALSE}
-random_forest = aml_random_forest(data=abalone_data$data, response=abalone_data$response, b=200, m=6, evaluation_criterion=sum_of_squares, min_obs=5, max_depth=16, verbose=FALSE)
+random_forest = aml_random_forest(data=abalone_data$data, 
+                                  response=abalone_data$response, 
+                                  b=200, 
+                                  m=6, 
+                                  evaluation_criterion=sum_of_squares, 
+                                  min_obs=5, 
+                                  max_depth=16, 
+                                  verbose=FALSE)
 ```
 
 ```{r echo = FALSE}
@@ -54,7 +61,7 @@ random_forest = aml_random_forest(data=abalone_data$data, response=abalone_data$
 random_forest = readRDS(file.path(find_root('DESCRIPTION'), 'data/random_forest.RDS'))
 ```
 
-Now that we have a random forest model, let's simply verify that it's fitting a better-than-garbage model on the training data. The parameters are intentionally set to encourage a bit of overfitting.
+Now that we have a random forest model, let's simply verify that it's fitting a better-than-garbage model on the training data. 
 
 ```{r}
 random_forest_predictions = predict_all(random_forest, abalone_data$data, n_trees=200)
@@ -66,7 +73,7 @@ random_forest_predictions = predict_all(random_forest, abalone_data$data, n_tree
 sum((abalone_data$response - random_forest_predictions)^2) / length(abalone_data$response)
 ```
 
-## Comparison of predicted and actual
+## Comparison of predicted and actual for Random Forest
 
 ```{r, echo=FALSE, fig.width=7, fig.height=5}
 plotting_data_rf = data.frame(predicted=random_forest_predictions, 
@@ -89,11 +96,18 @@ Not bad! This model is clearly picking up some signal. Let's try out a small GBM
 # GBM Model
 
 ```{r, eval=FALSE}
-gbm = aml_gbm(abalone_data$data, abalone_data$response, learning_rate=.1, n_trees=50, evaluation_criterion=sum_of_squares, min_obs=10, max_depth=4, verbose=FALSE)
+gbm = aml_gbm(abalone_data$data, 
+              abalone_data$response, 
+              learning_rate=.1, 
+              n_trees=50, 
+              evaluation_criterion=sum_of_squares, 
+              min_obs=10, 
+              max_depth=4, 
+              verbose=FALSE)
 ```
 
 ```{r echo = FALSE}
-# Do a cooking show trick and bring out an already baked rf
+# Do a cooking show trick and bring out an already baked gbm
 gbm = readRDS(file.path(find_root('DESCRIPTION'), 'data/gbm.RDS'))
 ```
 
@@ -109,7 +123,7 @@ gbm_predictions = predict_all(gbm, abalone_data$data, n_trees=50)
 sum((abalone_data$response - gbm_predictions)^2) / length(abalone_data$response)
 ```
 
-## Comparison of predicted and actual
+## Comparison of predicted and actual for GBM
 
 ```{r, echo=FALSE, fig.width=7, fig.height=5}
 
