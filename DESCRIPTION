@@ -1,6 +1,6 @@
 Package: ArtisanalMachineLearning
 Title: Hand Made Pure Organic Machine Learning
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: person(given = "Jeremy", family = "Werner", email = "jeremy@jerwerner.com", role = c("aut", "cre"))
 Description: As an exercise of professional development (but mostly for funzies)
     I will be writing many of the machine learning algorithms I know and love
