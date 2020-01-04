@@ -1,0 +1,149 @@
+---
+title: "Random Forest and GBM Vignette"
+author: "Jeremy Werner"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Tree-based models are amazing. Here's a very simple vignette demonstrating how to use Artisanal Machine Learning's Random Forest and GBM models.
+
+# Read Abalone Data
+
+```{r echo=FALSE}
+library(ggplot2)
+library(rprojroot)
+abalone_data_file = system.file("external_data", "abalone_data.RDS", package="ArtisanalMachineLearning", mustWork=TRUE)
+abalone_data = readRDS(abalone_data_file)
+set.seed(1337)
+```
+
+```{r}
+library(ArtisanalMachineLearning)
+```
+
+This example will be using the 'Abalone' dataset that I robbed from the internet here: https://archive.ics.uci.edu/ml/datasets/abalone where we try to predict the age of abalones from measured characteristics.
+
+```{r}
+dim(abalone_data$data)
+summary(abalone_data$data)
+```
+
+The semi-large data set has many numeric columns and a numeric response that takes integer values from 1-29.
+
+```{r, echo=FALSE, fig.width = 7, fig.height = 5}
+ggplot(data=data.frame(response=abalone_data$response), aes(response)) + 
+    geom_histogram(breaks=seq(0, 30, by = 1), 
+                   col="grey", 
+                   fill="blue") + 
+    labs(x="", y="Count", title="Histogram of Response") + 
+    theme_bw()
+```
+
+# Random Forest Model
+
+```{r, eval=FALSE}
+random_forest = aml_random_forest(data=abalone_data$data, 
+                                  response=abalone_data$response, 
+                                  b=200, 
+                                  m=6, 
+                                  evaluation_criterion=sum_of_squares, 
+                                  min_obs=5, 
+                                  max_depth=16, 
+                                  verbose=FALSE)
+```
+
+```{r echo = FALSE}
+# Do a cooking show trick and bring out an already baked rf
+random_forest = readRDS(file.path(find_root('DESCRIPTION'), 'data/random_forest.RDS'))
+```
+
+Now that we have a random forest model, let's simply verify that it's fitting a better-than-garbage model on the training data. 
+
+```{r}
+random_forest_predictions = predict_all(random_forest, abalone_data$data, n_trees=200)
+```
+
+## SSE on training data
+
+```{r}
+sum((abalone_data$response - random_forest_predictions)^2) / length(abalone_data$response)
+```
+
+## Comparison of predicted and actual for Random Forest
+
+```{r, echo=FALSE, fig.width=7, fig.height=5}
+plotting_data_rf = data.frame(predicted=random_forest_predictions, 
+                               actual=abalone_data$response, 
+                               Difference=abs(random_forest_predictions - abalone_data$response))
+
+ggplot(plotting_data_rf, aes(x=actual, y=predicted, color=Difference)) +
+    geom_point() + 
+    scale_y_continuous(limits = c(-1, 29)) + 
+    geom_jitter() + 
+    scale_color_viridis() + 
+    geom_abline(intercept = 0, slope = 1, color="black", size=1.5) + 
+    labs(x="Actual", y="Predicted", title="Actual vs Predicted") + 
+    theme_bw()
+```
+
+Not bad! This model is clearly picking up some signal. Let's try out a small GBM now just for kicks.
+
+
+# GBM Model
+
+```{r, eval=FALSE}
+gbm = aml_gbm(abalone_data$data, 
+              abalone_data$response, 
+              learning_rate=.1, 
+              n_trees=50, 
+              evaluation_criterion=sum_of_squares, 
+              min_obs=10, 
+              max_depth=4, 
+              verbose=FALSE)
+```
+
+```{r echo = FALSE}
+# Do a cooking show trick and bring out an already baked gbm
+gbm = readRDS(file.path(find_root('DESCRIPTION'), 'data/gbm.RDS'))
+```
+
+Circa the RF model, let's see if this picks up any signal at all on the training data.
+
+```{r}
+gbm_predictions = predict_all(gbm, abalone_data$data, n_trees=50)
+```
+
+## SSE on training data
+
+```{r}
+sum((abalone_data$response - gbm_predictions)^2) / length(abalone_data$response)
+```
+
+## Comparison of predicted and actual for GBM
+
+```{r, echo=FALSE, fig.width=7, fig.height=5}
+
+plotting_data_gbm = data.frame(predicted=gbm_predictions, 
+                               actual=abalone_data$response, 
+                               Difference=abs(gbm_predictions - abalone_data$response))
+
+ggplot(plotting_data_gbm, aes(x=actual, y=predicted, color=Difference)) +
+    geom_point() + 
+    scale_y_continuous(limits = c(-1, 29)) + 
+    geom_jitter() + 
+    scale_color_viridis() + 
+    geom_abline(intercept = 0, slope = 1, color="black", size=1.5) + 
+    labs(x="Actual", y="Predicted", title="Actual vs Predicted") + 
+    theme_bw()
+```
+
+
+# Conclusion
+
+The RF model is outperforming the GBM, but the GBM is significantly smaller and the author didn't spend much time tuning the hyperparameters ¯\_(ツ)_/¯ 
+
+Also, this illustration only includes looking at statistics on the training data set, so we definitely can't make huge conclusions. The author simply wanted to demonstrate these hand-crafted models were producing better-than-trash results, and that has been achieved. 
