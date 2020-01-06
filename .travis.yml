@@ -3,18 +3,13 @@ sudo: false
 warnings_are_errors: false
 cache: packages
 before_install:
-  - docker build -f Dockerfile -t aml .
+  - docker build -f Dockerfile_tests -t aml_tests .
 services:
   - docker
-
-r_build_args: --no-build-vignettes --no-manual --no-resave-data
-r_check_args: --no-build-vignettes --no-manual
-
+script: docker run --mount src=$PWD,target=/ArtisanalMachineLearning,type=bind -it aml_tests
 before_deploy:
   - R -e "install.packages('roxygen2', repos = 'http://cran.rstudio.com')"
-
 r_packages:
   - covr
-
 after_success:
   - Rscript -e 'library(covr); codecov()'
